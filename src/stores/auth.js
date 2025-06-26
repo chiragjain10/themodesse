@@ -7,6 +7,7 @@ export const useAuthStore = defineStore('auth', {
         isAuthenticated: localStorage.getItem('token') ? true : false,
         user: null,
         token: localStorage.getItem('token') || null,
+        userLoaded: false
     }),
     actions: {
         async login(credentials) {
@@ -23,6 +24,7 @@ export const useAuthStore = defineStore('auth', {
                     localStorage.setItem('token', this.token);
                     this.isAuthenticated = true;
                     this.user = response.data.user;
+                    this.userLoaded = true;
                     console.log('Auth store: Login successful:');
                     return response.data;
                 } else {
@@ -39,6 +41,7 @@ export const useAuthStore = defineStore('auth', {
                 this.token = null;
                 localStorage.removeItem('token');
                 this.user = null;
+                this.userLoaded = true;
                 
                 // Format error message
                 if (error.response) {
@@ -58,15 +61,8 @@ export const useAuthStore = defineStore('auth', {
                     } else {
                         throw new Error(error.response.data.message || 'Login failed. Please try again.');
                     }
-                } else if (error.request) {
-                    // The request was made but no response was received
-                    console.error('Auth store: No response received');
-                    throw new Error('No response from server. Please check your internet connection.');
-                } else {
-                    // Something happened in setting up the request that triggered an Error
-                    console.error('Auth store: Error setting up request:', error.message);
-                    throw new Error('An error occurred. Please try again.');
                 }
+                throw error;
             }
         },
         async register(userData) {
@@ -77,8 +73,10 @@ export const useAuthStore = defineStore('auth', {
                     password: userData.password,
                     password_confirmation: userData.confirmPassword
                 });
+                this.userLoaded = true;
                 return response.data;
             } catch (error) {
+                this.userLoaded = true;
                 if (error.response) {
                     if (error.response.status === 422) {
                         // Validation error
@@ -100,6 +98,7 @@ export const useAuthStore = defineStore('auth', {
                 this.isAuthenticated = false;
                 this.user = null;
                 this.token = null;
+                this.userLoaded = true;
                 localStorage.removeItem('token');
                 const router = useRouter();
                 router.push('/login');
@@ -115,14 +114,18 @@ export const useAuthStore = defineStore('auth', {
                     });
                     this.user = response.data;
                     this.isAuthenticated = true;
+                    this.userLoaded = true;
                 } catch (error) {
                     this.isAuthenticated = false;
                     this.user = null;
                     this.token = null;
+                    this.userLoaded = true;
                     localStorage.removeItem('token');
                     const router = useRouter();
                     router.push('/login');
                 }
+            } else {
+                this.userLoaded = true;
             }
         },
     },

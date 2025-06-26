@@ -1,56 +1,59 @@
 <template>
-  <div class="container py-5">
-    <div class="login-popup bg-white">
-      <div class="form-box">
-        <!-- Show error message if any -->
-        <div v-if="errorMessage" class="alert alert-danger" role="alert">
-          <i class="fas fa-exclamation-circle me-2"></i>
-          {{ errorMessage }}
-        </div>
+  <div class="login-page d-flex align-items-center justify-content-center py-5">
+    <div class="login-popup bg-white p-4 rounded shadow">
+      <!-- Show error message if any -->
+      <div v-if="errorMessage" class="alert alert-danger" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        {{ errorMessage }}
+      </div>
 
-        <!-- Show success message if coming from registration -->
-        <div v-if="route.query.registered" class="alert alert-success" role="alert">
-          <i class="fas fa-check-circle me-2"></i>
-          Registration successful! Please login to continue.
-        </div>
+      <!-- Show success message if coming from registration -->
+      <div v-if="route.query.registered" class="alert alert-success" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        Registration successful! Please login to continue.
+      </div>
 
-        <form @submit.prevent="handleLogin">
-          <h2 class="form-title text-center">Login</h2>
-          <div class="form-group">
-            <input type="email" class="form-control" placeholder="Your Email Address *" v-model="loginForm.email"
-              required :disabled="loading" @input="errorMessage = ''" />
+      <form @submit.prevent="handleLogin">
+        <h2 class="form-title text-center mb-4">Login</h2>
+        <div class="form-group mb-3">
+          <label for="login-email" class="form-label">Your Email Address *</label>
+          <input type="email" class="form-control" id="login-email" placeholder="Your Email Address *"
+            v-model="loginForm.email" required :disabled="loading" @input="errorMessage = ''" />
+        </div>
+        <div class="form-group mb-3">
+          <label for="login-password" class="form-label">Password *</label>
+          <input type="password" class="form-control" id="login-password" placeholder="Password *"
+            v-model="loginForm.password" required :disabled="loading" @input="errorMessage = ''" />
+        </div>
+        <div class="form-footer d-flex justify-content-between align-items-center mb-3">
+          <div class="form-checkbox">
+            <input type="checkbox" class="form-check-input" id="remember-me" v-model="loginForm.remember"
+              :disabled="loading" />
+            <label class="form-check-label" for="remember-me">Remember Me</label>
           </div>
-          <div class="form-group">
-            <input type="password" class="form-control" placeholder="Password *" v-model="loginForm.password" required
-              :disabled="loading" @input="errorMessage = ''" />
-          </div>
-          <div class="form-footer">
-            <div class="form-checkbox">
-              <input type="checkbox" class="custom-checkbox" v-model="loginForm.remember" :disabled="loading" />
-              <label class="form-control-label">Remember Me</label>
-            </div>
-          </div>
-          <button class="btn btn-dark btn-block btn-rounded" type="submit" :disabled="loading" @click="handleLogin">
-            <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-            {{ loading ? 'Logging in...' : 'Login' }}
-          </button>
-        </form>
-        <div class="form-choice text-center">
-          <label class="ls-m">or Login With</label>
-          <div class="social-links">
-            <a href="#" class="social-link social-google fab fa-google border-no"></a>
-            <a href="#" class="social-link social-facebook fab fa-facebook-f border-no"></a>
-            <a href="#" class="social-link social-twitter fab fa-twitter border-no"></a>
-          </div>
+          <RouterLink to="/forgot-password" class="link text-decoration-underline">Forgot Password?</RouterLink>
+        </div>
+        <button class="btn btn-dark btn-block btn-rounded w-100 mb-3" type="submit" :disabled="loading" @click="handleLogin">
+          <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          {{ loading ? 'Logging in...' : 'Login' }}
+        </button>
+      </form>
+      <div class="form-choice text-center mb-3">
+        <label class="ls-m">or Login With</label>
+        <div class="social-links mt-2">
+          <a href="#" class="social-link social-google fab fa-google border-no mx-1"></a>
+          <a href="#" class="social-link social-facebook fab fa-facebook-f border-no mx-1"></a>
+          <a href="#" class="social-link social-twitter fab fa-twitter border-no mx-1"></a>
         </div>
       </div>
+      <p class="text-center mt-3">Don't have an account? <RouterLink to="/register">Register</RouterLink></p>
     </div>
   </div>
 </template>
 
 <script setup>
 import { reactive, ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter, useRoute, RouterLink } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
 const authStore = useAuthStore();
@@ -89,10 +92,10 @@ const handleLogin = async (event) => {
       console.log('Login successful, user:', authStore.user);
 
       // Show success message
-      errorMessage.value = 'Login successful! Redirecting...';
+      // errorMessage.value = 'Login successful! Redirecting...'; // Removed to avoid showing in the new page
 
       // Add a small delay before redirect
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // await new Promise(resolve => setTimeout(resolve, 1000)); // Removed delay
 
       // Check if there's a pending cart item
       const pendingCartItem = localStorage.getItem('pendingCartItem');
@@ -133,6 +136,16 @@ const handleLogin = async (event) => {
 </script>
 
 <style scoped>
+.login-page {
+  padding: 50px 0;
+  background-color: #f8f4ec; /* Example background color */
+}
+
+.login-popup {
+  max-width: 400px; /* Limit the width of the form */
+  width: 100%;
+}
+
 .alert {
   margin-bottom: 1rem;
   padding: 0.75rem 1.25rem;
@@ -188,5 +201,46 @@ const handleLogin = async (event) => {
 
 .btn-product:hover {
   opacity: 0.8;
+}
+
+/* Added basic form control styling for consistency if not using a CSS framework */
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+}
+
+.form-label {
+    margin-bottom: 0.5rem;
+}
+
+.form-check-input[type="checkbox"] {
+    border-radius: 0.25em;
+}
+
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.form-check-input:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
 }
 </style>

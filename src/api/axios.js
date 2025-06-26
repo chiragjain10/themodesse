@@ -16,9 +16,12 @@ axiosInstance.interceptors.request.use(
         console.log('Making request to:', config.url);
         console.log('Request config:', config);
         
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        // Only add auth token for non-cart endpoints
+        if (!config.url.includes('/api/cart/')) {
+            const token = localStorage.getItem('token');
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
         }
         return config;
     },
@@ -39,8 +42,8 @@ axiosInstance.interceptors.response.use(
         console.error('Response error config:', error.config);
         console.error('Response error response:', error.response);
         
-        if (error.response?.status === 401) {
-            // Handle unauthorized access
+        // Only handle 401 for non-cart endpoints
+        if (error.response?.status === 401 && !error.config.url.includes('/api/cart/')) {
             localStorage.removeItem('token');
         }
         return Promise.reject(error);
