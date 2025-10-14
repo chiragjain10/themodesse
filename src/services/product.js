@@ -6,7 +6,7 @@ import axios from '../api/axios'; // Ensure the path to your axios config is cor
  */
 export async function getProducts() {
   try {
-    const response = await axios.get('http://localhost:8000/api/products');
+    const response = await axios.get('/api/products');
     return response; // Response object will have a data property (products array)
   } catch (error) {
     console.error('Error fetching products:', error);

@@ -116,6 +116,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import SEOHead from '@/components/SEOHead.vue'
+import axios from '@/api/axios'
 
 // Schema markup for Contact page
 const contactSchema = {
@@ -209,12 +210,8 @@ const handleSubmit = async () => {
 
   loading.value = true
   try {
-    const res = await fetch('/api/contacts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
-    })
-    if (res.ok) {
+    const { status, data } = await axios.post('/api/contacts', form)
+    if (status >= 200 && status < 300) {
       alert.message = 'Message sent successfully! We will get back to you soon.'
       alert.type = 'success'
       form.name = ''
@@ -224,7 +221,6 @@ const handleSubmit = async () => {
       form.subject = ''
       form.message = ''
     } else {
-      const data = await res.json().catch(() => ({}))
       alert.message = data?.message || 'Failed to send message. Please try again later.'
       alert.type = 'danger'
     }

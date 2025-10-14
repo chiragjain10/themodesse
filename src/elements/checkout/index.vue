@@ -129,6 +129,7 @@ import { useRouter } from 'vue-router';
 import { useCartStore } from '@/stores/cart';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from '@/composables/useToast';
+import axios from '@/api/axios';
 import { orderService } from '@/services/order';
 import { authService } from '@/services/auth';
 import { razorpayService } from '@/services/razorpay';

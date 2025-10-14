@@ -55,7 +55,8 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'https://backend.themodesse.com/',
-        changeOrigin: true
+        changeOrigin: true,
+        secure: false
       }
     }
   },

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '@/api/axios';
 
 export const cartService = {
     async addToCart(productId, quantity, cartToken, variants) {
