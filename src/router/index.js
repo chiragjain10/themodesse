@@ -6,7 +6,7 @@ import RegisterPage from '../views/RegisterPage.vue';
 import Cart from '../elements/cart/index.vue';
 import ShopPage from '../elements/shop/index.vue';
 import ProductDetails from '@/elements/productDetails/index.vue'
-import About from '../elements/About/index.vue';
+import About from '../elements/about/index.vue';
 import Contact from '../elements/Contact/index.vue';
 import PrivacyPolicy from '@/elements/Legal/PrivacyPolicy.vue'
 import TermsConditions from '@/elements/Legal/TermsConditions.vue'
