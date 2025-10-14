@@ -1,173 +1,150 @@
 <template>
-    <div class="banner-section">
-        <div class="swiper tf-swiper BannerTop-swiper" data-preview="1" data-tablet="1" data-mobile="1" data-space="0"
-            data-pagination="1">
-            <div class="swiper-wrapper">
-                <div v-for="(slide, index) in slides" :key="index" class="swiper-slide">
-                    <div class="slider_wrap">
-                        <div class="sld-image">
-                            <img :src="slide.image" :alt="slide.title" :width="slide.width || 1920"
-                                :height="slide.height || 800" loading="eager" fetchpriority="high" class="lazyload"
-                                @error="handleImageError">
-                        </div>
-                        <div class="sld-content">
-                            <h2 class="title">{{ slide.title }}</h2>
-                            <p class="text">{{ slide.text }}</p>
-                            <RouterLink :to="slide.link" class="btn">{{ slide.buttonText }}</RouterLink>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="sw-dot-default tf-sw-pagination"></div>
+    <section class="premium-banner">
+        <video ref="bannerVideoRef" class="banner-video" loop muted playsinline preload="metadata"
+            @canplaythrough="handleVideoReady" @loadeddata="handleVideoLoaded" @error="handleVideoError">
+            <source :src="BannerVideoMP4" type="video/mp4" />
+            <source :src="BannerVideo" type="video/webm" />
+            Your browser does not support the video tag.
+        </video>
+        <div class="banner-overlay"></div>
+        <div class="banner-content d-none">
+            <h1 class="banner-title">Discover the New Collection</h1>
+            <p class="banner-subtitle">Timeless. Elegant. Uniquely You.</p>
+            <RouterLink to="/shop" class="banner-btn">Shop Now <span>&rarr;</span></RouterLink>
         </div>
-    </div>
+    </section>
 </template>
 
 <script setup>
-import { onMounted, ref, nextTick } from 'vue'
-import Swiper from 'swiper'
-import { Autoplay, Pagination, EffectFade } from 'swiper/modules'
-import 'swiper/css'
-import 'swiper/css/pagination'
-import 'swiper/css/effect-fade'
+import { ref, onMounted } from 'vue';
+import BannerVideo from '@/assets/Banner Video.webm';
+import BannerVideoMP4 from '@/assets/banner_video.mp4';
 
-import slider1 from "@/assets/images/banner1.jpg"
-import slider2 from "@/assets/images/banner2.jpg"
-import slider3 from "@/assets/images/banner3.jpg"
+const bannerVideoRef = ref(null);
+const isIOS = ref(false);
 
-// Register Swiper modules
-Swiper.use([Autoplay, Pagination, EffectFade])
+// Detect iOS
+const detectIOS = () => {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    return /iPad|iPhone|iPod/.test(userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+};
 
-const slides = ref([
-    {
-        image: slider1,
-        alt: 'Clothes that feel like home',
-        text: `<span class="fst-italic">Clothes</span> That <br> Feel Like Home`,
-        link: '/shop',
-        buttonText: 'explore collection',
-        btnClass: 'style-white-2',
-        textClass: ''
-    },
-    {
-        image: slider2,
-        alt: 'Move with grace',
-        text: `<span class="fst-italic">Move</span> With <br> Grace`,
-        link: '/shop',
-        buttonText: 'discover more',
-        btnClass: '',
-        textClass: 'text-main'
-    },
-    {
-        image: slider3,
-        alt: 'Timeless simplicity',
-        text: `<span class="fst-italic">Timeless</span><br> Simplicity`,
-        link: '/shop',
-        buttonText: 'shop now',
-        btnClass: 'style-white-2',
-        textClass: ''
+function handleVideoReady() {
+    if (bannerVideoRef.value) {
+        bannerVideoRef.value.play().catch((error) => {
+            console.log('Video play failed:', error);
+        });
     }
-])
+}
 
-onMounted(async () => {
-    await nextTick() // Wait till DOM is fully rendered
-    new Swiper('.BannerTop-swiper', {
-        modules: [Autoplay, Pagination, EffectFade],
-        slidesPerView: 1,
-        effect: 'fade',
-        loop: true,
-        speed: 1000,
-        autoplay: {
-            delay: 3000,
-            disableOnInteraction: false
-        },
-        pagination: {
-            el: '.tf-sw-pagination',
-            clickable: true
+function handleVideoLoaded() {
+    console.log('Video loaded successfully');
+}
+
+function handleVideoError(error) {
+    console.error('Video error:', error);
+}
+
+onMounted(() => {
+    isIOS.value = detectIOS();
+    
+    if (bannerVideoRef.value) {
+        // For iOS, we need to handle video differently
+        if (isIOS.value) {
+            bannerVideoRef.value.load();
+            bannerVideoRef.value.play().catch((error) => {
+                console.log('iOS video play failed:', error);
+            });
+        } else {
+            bannerVideoRef.value.play().catch((error) => {
+                console.log('Video play failed:', error);
+            });
         }
-    })
-})
+    }
+});
 </script>
 
+
 <style scoped>
-.banner-section {
+.premium-banner {
     position: relative;
-    width: 100%;
+    width: 100vw;
+    height: 80vh;
+    min-height: 400px;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.slider_wrap {
-    position: relative;
-    width: 100%;
-}
-
-.sld-image {
-    position: relative;
-    width: 100%;
-    height: 0;
-    padding-bottom: 41.67%;
-    /* 800/1920 = 0.4167 */
-    overflow: hidden;
-}
-
-.sld-image img {
+.banner-video {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 100vw;
     height: 100%;
     object-fit: cover;
-    will-change: transform;
+    z-index: 1;
+    filter: brightness(0.7) saturate(1.2);
 }
 
-.sld-content {
+.banner-overlay {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 50%);
     z-index: 2;
-    width: 100%;
-    max-width: 800px;
-    padding: 0 20px;
 }
 
-/* Optimize animations */
-.title,
-.text,
-.btn {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.6s ease forwards;
+.banner-content {
+    position: relative;
+    z-index: 3;
+    color: #fff;
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 2rem;
 }
 
-.title {
-    animation-delay: 0.2s;
+.banner-title {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    text-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
 }
 
-.text {
-    animation-delay: 0.4s;
+.banner-subtitle {
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 2rem;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
 }
 
-.btn {
-    animation-delay: 0.6s;
-}
-
-@keyframes fadeInUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Optimize swiper pagination */
-:deep(.swiper-pagination-bullet) {
-    width: 10px;
-    height: 10px;
-    background: rgba(255, 255, 255, 0.5);
-    opacity: 1;
-}
-
-:deep(.swiper-pagination-bullet-active) {
+.banner-btn {
+    display: inline-block;
+    padding: 0.9rem 2.2rem;
     background: #fff;
+    color: #222;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 32px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.banner-btn:hover {
+    background: #222;
+    color: #fff;
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.18);
+}
+
+@media (max-width: 768px) {
+    .premium-banner {
+        height: 45vh;
+    }
 }
 </style>

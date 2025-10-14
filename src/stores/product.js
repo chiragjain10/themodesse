@@ -12,11 +12,30 @@ export const useProductStore = defineStore('product', () => {
   const compare = useCompareStore()
   const toast = useToast()
 
-  const addToCart = async (product, quantity = 1, selectedAttributes = {}) => {
-    console.log('Adding to cart:', { product, quantity, selectedAttributes })
+  // Add product state
+  const product = ref(null)
+  const loading = ref(false)
+  const error = ref(null)
+
+  const fetchProduct = async (slug) => {
+    loading.value = true
+    error.value = null
+    try {
+      const response = await axios.get(`/api/products/${slug}`)
+      product.value = response.data.product
+    } catch (err) {
+      error.value = err?.response?.data?.message || 'Failed to load product.'
+      product.value = null
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const addToCart = async (productObj, quantity = 1, selectedAttributes = {}) => {
+    console.log('Adding to cart:', { product: productObj, quantity, selectedAttributes })
     try {
       const cartData = {
-        productId: product.id,
+        productId: productObj.id,
         quantity: quantity,
         selectedVariant: selectedAttributes,
         cartToken: localStorage.getItem('cartToken') || generateCartToken()
@@ -38,14 +57,14 @@ export const useProductStore = defineStore('product', () => {
     }
   }
 
-  const addToWishlist = async (product) => {
-    console.log('Adding to wishlist:', product)
+  const addToWishlist = async (productObj) => {
+    console.log('Adding to wishlist:', productObj)
     try {
-      if (wishlist.isWishlisted(product.id)) {
-        await wishlist.removeFromWishlist(product.id)
+      if (wishlist.isWishlisted(productObj.id)) {
+        await wishlist.removeFromWishlist(productObj.id)
         toast.success('Product removed from wishlist')
       } else {
-        await wishlist.addToWishlist(product.id)
+        await wishlist.addToWishlist(productObj.id)
         toast.success('Product added to wishlist')
       }
     } catch (error) {
@@ -54,18 +73,18 @@ export const useProductStore = defineStore('product', () => {
     }
   }
 
-  const addToCompare = async (product) => {
-    console.log('Adding to compare:', product)
+  const addToCompare = async (productObj) => {
+    console.log('Adding to compare:', productObj)
     try {
-      if (compare.isInCompare(product.id)) {
-        await compare.removeFromCompare(product.id)
+      if (compare.isInCompare(productObj.id)) {
+        await compare.removeFromCompare(productObj.id)
         toast.success('Product removed from compare')
       } else {
         if (compare.isFull.value) {
           toast.error(`Cannot add more than ${compare.maxItems} items to compare`)
           return
         }
-        await compare.addToCompare(product)
+        await compare.addToCompare(productObj)
         toast.success('Product added to compare')
       }
     } catch (error) {
@@ -80,6 +99,10 @@ export const useProductStore = defineStore('product', () => {
   }
 
   return {
+    product,
+    loading,
+    error,
+    fetchProduct,
     addToCart,
     addToWishlist,
     addToCompare

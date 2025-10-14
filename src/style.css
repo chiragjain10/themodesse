@@ -1,3 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* iOS Safari Specific Fixes */
+@supports (-webkit-touch-callout: none) {
+    /* Fix for iOS Safari viewport issues */
+    html, body {
+        -webkit-text-size-adjust: 100%;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    /* Fix for iOS Safari scrolling issues */
+    * {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Fix for iOS Safari transform issues */
+    .swiper-slide,
+    .card_product--V01,
+    .banner-video {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+    }
+    
+    /* Fix for iOS Safari background attachment issues */
+    .texture_background,
+    .premium-banner {
+        background-attachment: scroll !important;
+    }
+    
+    /* Fix for iOS Safari video playback */
+    video {
+        -webkit-playsinline: true;
+        playsinline: true;
+        -webkit-video-playable-inline: true;
+    }
+    
+    /* Fix for iOS Safari input zoom */
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+    
+    /* Fix for iOS Safari tap highlight */
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+
+/* Prevent iOS Safari from applying blur filters */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    .texture_background,
+    .banner-video {
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+    }
+}
+
 .shimmer-loader {
     background: #f6f7f8;
     border-radius: 8px;

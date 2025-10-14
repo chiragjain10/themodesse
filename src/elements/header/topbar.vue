@@ -13,9 +13,9 @@
                     class="tf-swiper"
                 >
                     <swiper-slide v-for="(msg, idx) in topbarMessages" :key="idx">
-                        <p class="text-caption-3 fw-medium text-white text-line-clamp-1">
+                            <p class="text-caption-3 fw-medium text-white text-line-clamp-1">
                             {{ msg }}
-                        </p>
+                            </p>
                     </swiper-slide>
                 </swiper>
             </div>
@@ -28,7 +28,6 @@
 import { computed } from 'vue';
 import { useCartStore } from '@/stores/cart';
 import { Swiper, SwiperSlide } from 'swiper/vue';
-import Swiper from 'swiper';
 import { Autoplay } from 'swiper/modules';
 
 const cart = useCartStore();

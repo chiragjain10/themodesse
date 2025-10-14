@@ -66,7 +66,7 @@
                   {{ product.name }}
                 </router-link>
                 <div class="price-wrap">
-                  <span class="price-new h5">${{ product.sale_price }}</span>
+                  <span class="price-new h5">${{ product.price }}</span>
                   <span v-if="product.discount_price" class="price-old fw-normal">${{ product.price }}</span>
                 </div>
               </div>

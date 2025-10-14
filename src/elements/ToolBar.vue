@@ -18,7 +18,7 @@
             </a>
         </div>
         <div class="toolbar-item">
-            <RouterLink to="/my-account">
+            <RouterLink to="/account">
                 <span class="toolbar-icon">
                     <i class="icon icon-user-2"></i>
                 </span>

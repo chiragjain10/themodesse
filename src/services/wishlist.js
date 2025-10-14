@@ -7,7 +7,6 @@ export const wishlistService = {
                 product_id: productId,
                 session_id: sessionId
             })
-            console.log('Add to wishlist response:', response.data)
             return response.data
         } catch (error) {
             console.error('Add to wishlist error:', error.response?.data || error)
@@ -17,10 +16,7 @@ export const wishlistService = {
 
     async removeFromWishlist(productId, sessionId) {
         try {
-            const response = await axios.delete(`/api/wishlist/${productId}`, {
-                data: { session_id: sessionId }
-            })
-            console.log('Remove from wishlist response:', response.data)
+            const response = await axios.delete(`/api/wishlist/${productId}?session_id=${sessionId}`)
             return response.data
         } catch (error) {
             console.error('Remove from wishlist error:', error.response?.data || error)
@@ -31,7 +27,6 @@ export const wishlistService = {
     async getWishlist(sessionId) {
         try {
             const response = await axios.get(`/api/wishlist/${sessionId}`)
-            console.log('Get wishlist response:', response.data)
             return response.data
         } catch (error) {
             console.error('Get wishlist error:', error.response?.data || error)
@@ -44,7 +39,6 @@ export const wishlistService = {
             const response = await axios.get(`/api/wishlist/check/${productId}`, {
                 params: { session_id: sessionId }
             })
-            console.log('Check wishlist response:', response.data)
             return response.data
         } catch (error) {
             console.error('Check wishlist error:', error.response?.data || error)

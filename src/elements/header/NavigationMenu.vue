@@ -1,111 +1,66 @@
 <template>
-    <nav class="box-navigation">
+    <nav :class="['box-navigation', { closing: hideMenus }]">
         <ul class="box-nav-menu">
-            <li class="menu-item active">
-                <RouterLink to="/" class="item-link">Home</RouterLink>
+            <li :class="['menu-item', { active: isHomeActive }]">
+                <RouterLink to="/" class="item-link" @click="closeAllMenus">Home</RouterLink>
             </li>
-            <li class="menu-item">
-                <RouterLink to="/categories" class="item-link">Categories<i class="icon icon-arrow-angle-down"></i>
-                </RouterLink>
-                <div class="sub-menu mega-menu container-layout-right-2 mega-menu-shop mega-menu-style-2">
-                    <div class="mega-menu-wrap">
-                        <div class="wrapper-sub-menu">
-                            <div class="mega-menu-item" v-for="category in megamenuCategories" :key="category.id">
-                                <p class="text-caption menu-heading">{{ category.name.toUpperCase() }}</p>
-                                <ul class="menu-list">
-                                    <li>
+            <li :class="['menu-item', 'dropdown', { active: isCategoryActive }]">
+                <a href="javascript:void(0)" class="item-link">Shop<i class="icon icon-arrow-angle-down"></i></a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <ul class="menu-four">
+                        <li class="has-sub">
+                            <RouterLink :to="{ path: '/shop-by-category' }" class="menu-link-text link" @click="closeAllMenus">
+                                Shop by Category
+                            </RouterLink>
+                            <!-- <i class="icon icon-arrow-angle-down ms-1"></i>
+                            <div class="submenu-right">
+                                <ul>
+                                    <li v-for="category in megamenuCategories" :key="category.id">
                                         <RouterLink :to="{
-                                            path: `/shop/${category.slug}`,
-                                            query: {
-                                                category_id: category.id,
-                                            }
+                                            path: `/shop`,
+                                            query: { category_id: category.id }
                                         }" class="menu-link-text link">
-                                            <img :src="category.image" :title="category.name" :alt="category.name"/>
+                                            {{ category.name }}
                                         </RouterLink>
                                     </li>
                                 </ul>
-                            </div>
-                        </div>
-                        <!-- <div class="wrapper-sub-collection">
-                            <div class="box_image--V01 h-100 hover-img">
-                                <div class="image h-100 img-style">
-                                    <img src="/src/assets/images/collections/cls-header.jpg"
-                                        data-src="/src/assets/images/collections/cls-header.jpg" alt=""
-                                        class="lazyload">
-                                </div>
-                                <div class="content">
-                                    <h5 class="box-text fw-medium text-white">
-                                        <span>Flash Sale</span>
-                                        <span class="br-line w-22 bg-white d-block"></span>
-                                        <span>30% OFF</span>
-                                    </h5>
-                                    <div class="box-btn">
-                                        <RouterLink to="/shop" class="tf-btn-line style-white text-uppercase">
-                                            <span class="text-caption lh-28">Shop Now</span>
-                                            <i class="icon-arrow-top-right-2 fs-10"></i>
-                                        </RouterLink>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> -->
-                    </div>
-                </div>
-            </li>
-            <li class="menu-item">
-                <RouterLink to="/products" class="item-link">
-                    Products
-                    <i class="icon icon-arrow-angle-down"></i>
-                </RouterLink>
-                <div class="sub-menu mega-menu mega-menu-product">
-                    <div class="container-layout-right">
-                        <div class="mega-menu-wrap">
-                            <div class="wrapper-sub-menu">
-                                <div class="mega-menu-content" v-for="category in megamenuCategories"
-                                    :key="category.id">
-                                    <div class="mega-menu-item">
-                                        <p class="text-caption menu-heading">{{ category.name.toUpperCase() }}</p>
-                                        <ul class="menu-list">
-                                            <li v-for="product in megamenuCategories[category]" :key="product.id">
-                                                <RouterLink :to="`/product/${product.slug}`"
-                                                    class="menu-link-text link">
-                                                    {{ product.name }}
-                                                </RouterLink>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- <div class="wrapper-sub-collection">
-                                <div class="card_product--V01">
-                                    <div class="card_product-wrapper aspect-ratio-1">
-                                        <RouterLink to="/product/default" class="product-img">
-                                            <img src="/src/assets/images/products/product-28.jpg"
-                                                data-src="/src/assets/images/products/product-28.jpg"
-                                                alt="Image Product" class="lazyload img-product">
-                                            <img src="/src/assets/images/products/product-29.jpg"
-                                                data-src="/src/assets/images/products/product-29.jpg"
-                                                alt="Image Product" class="lazyload img-hover">
-                                        </RouterLink>
-                                        <ul class="list-product-btn center">
-                                            <li>
-                                                <RouterLink to="/quick-view" class="hover-tooltip box-icon quickview">
-                                                    <span class="icon icon-view"></span>
-                                                    <span class="tooltip">Quick View</span>
-                                                </RouterLink>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
                             </div> -->
-                        </div>
-                    </div>
+                        </li>
+                        <li>
+                            <RouterLink :to="{ path: '/shop-by-edits' }" class="menu-link-text link" @click="closeAllMenus">
+                                Shop by Edits
+                            </RouterLink>
+                        </li>
+                        <li>
+                            <RouterLink :to="{ path: '/product-collection', query: { key: 'collections', label: 'Collections' } }" class="menu-link-text link disabled" @click="closeAllMenus">
+                                Shop by Collection
+                            </RouterLink>
+                        </li>
+                        <li>
+                            <span class="menu-link-text disabled">Best Deals</span>
+                        </li>
+                    </ul>
                 </div>
             </li>
-            <li class="menu-item">
-                <RouterLink to="/our-story" class="item-link">Our Story</RouterLink>
+            <li :class="['menu-item', 'dropdown', { active: isJournalsActive }]">
+                <a href="#" class="item-link">Journals<i class="icon icon-arrow-angle-down"></i></a>
+                <div class="dropdown-menu">
+                    <ul>
+                        <li>
+                            <a href="https://www.instagram.com/" class="menu-link-text link" target="_blank"
+                                rel="noopener">Instagram Journal</a>
+                        </li>
+                        <li>
+                            <RouterLink to="/journals" class="menu-link-text link" @click="closeAllMenus">Our Journal</RouterLink>
+                        </li>
+                    </ul>
+                </div>
             </li>
-            <li class="menu-item">
-                <RouterLink to="/contact" class="item-link">Contact</RouterLink>
+            <li :class="['menu-item', { active: isOurStoryActive }]">
+                <RouterLink to="/our-story" class="item-link" @click="closeAllMenus">Our Story</RouterLink>
+            </li>
+            <li :class="['menu-item', { active: isContactActive }]">
+                <RouterLink to="/contact" class="item-link" @click="closeAllMenus">Contact Us</RouterLink>
             </li>
         </ul>
     </nav>
@@ -113,12 +68,13 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { getData } from '@/stores/getApi'
 
 // State for dynamic megamenu
 const megamenuCategories = ref([])
 const megamenuLoading = ref(true)
+const hideMenus = ref(false)
 
 // Flatten sub-categories from all categories
 const subCategories = computed(() => {
@@ -160,4 +116,108 @@ const loadMegamenuData = async () => {
 onMounted(() => {
     loadMegamenuData()
 })
+
+const route = useRoute();
+const router = useRouter();
+
+// Handle home click to refresh page
+const handleHomeClick = (event) => {
+    event.preventDefault()
+    
+    // If we're already on home page, refresh it
+    if (router.currentRoute.value.path === '/') {
+        window.location.reload()
+    } else {
+        // Navigate to home and then refresh
+        router.push('/').then(() => {
+            window.location.reload()
+        })
+    }
+}
+
+const isHomeActive = computed(() => route.path === '/');
+const isCategoryActive = computed(() => route.path === '/shop');
+const isJournalsActive = computed(() => route.path === '/journals');
+const isOurStoryActive = computed(() => route.path === '/our-story');
+const isContactActive = computed(() => route.path === '/contact');
+
+// Force-close all dropdowns on any nav click
+const closeAllMenus = () => {
+    hideMenus.value = true
+    setTimeout(() => { hideMenus.value = false }, 300)
+}
 </script>
+
+<style>
+.menu-item a {
+    padding: 20px 0;
+}
+
+.dropdown:hover>.dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu li {
+    padding: 5px 0;
+    width: calc(100% + 20px);
+}
+
+.dropdown-menu a {
+    padding: 0;
+}
+
+.dropdown-menu a:hover {
+    text-decoration: underline;
+}
+
+.dropdown-menu {
+    padding: 20px;
+}
+
+/* Force hide when closing */
+.box-navigation.closing .dropdown-menu { display: none !important; }
+
+/* Animate arrow on hover of 'Shop by Category' */
+.menu-four .has-sub {
+    display: flex;
+    align-items: center;
+}
+.menu-four .has-sub > .icon {
+    display: inline-block;
+    transition: transform 0.2s ease, color 0.2s ease;
+    transform-origin: 50% 50%;
+}
+.menu-four .has-sub:hover > .icon {
+    color: var(--primary);
+    transform: rotate(180deg);
+}
+
+/* New nested submenu styles */
+.menu-four {
+    position: relative;
+    min-width: 188px;
+}
+.menu-four > li {
+    position: relative;
+}
+.menu-four .has-sub > .submenu-right {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    background: #fff;
+    border: 1px solid #eee;
+    padding: 16px 20px;
+    min-width: 240px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    z-index: 1000;
+}
+.menu-four .has-sub:hover > .submenu-right {
+    display: block;
+}
+.menu-link-text.disabled {
+    color: #999;
+    cursor: default;
+    pointer-events: none;
+}
+</style>

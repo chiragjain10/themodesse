@@ -1,8 +1,18 @@
 <template>
+  <!-- SEO Component -->
+  <SEOHead 
+    v-if="product"
+    :title="seoTitle"
+    :description="seoDescription"
+    :keywords="seoKeywords"
+    :image="product.images?.[0] || '/src/assets/images/themodesse.jpg'"
+    :schema="productSchema"
+  />
+  
   <ProductTitle />
   <!-- Product Detail -->
   <section class="themesFlat">
-    <div class="tf-main-product section-image-zoom">
+    <div class="tf-main-product section-image-zoom pb-5">
       <div class="container">
         <div v-if="loading" class="text-center py-5">
           <div class="spinner-border" role="status">
@@ -18,56 +28,108 @@
         <div v-else-if="product" class="row">
           <div class="col-lg-6">
             <!-- main image -->
-            <MainImage />
+            <MainImage :product="product" />
           </div>
           <div class="col-lg-6">
-            <ProductDescribe />
+            <ProductDescribe 
+              :product="product"
+              :handle-attributes-update="handleAttributesUpdate"
+              :handle-quantity-update="handleQuantityUpdate"
+            />
           </div>
         </div>
       </div>
     </div>
     <div class="tf-sticky-btn-atc">
       <div class="container">
-        <BottomSticyBar />
+        <!-- <BottomSticyBar /> -->
       </div>
     </div>
   </section>
-  <!-- /Product Detail -->
-  <!-- For You -->
-  <ForYou />
-  <!-- /For You -->
-  <IconBox />
-  <div class="tf-product-info-price">
-    <span class="price">₹{{ selectedProductData.totalPrice || product?.sale_price || product?.price }}</span>
-    <span v-if="product?.original_price" class="price-old">₹{{ product.original_price }}</span>
-  </div>
-  <ProductAttributes 
-    :product="product" 
-    @update:selectedAttributes="handleAttributesUpdate"
-  />
-  <ProductButtons 
-    :product="product" 
-    @update:quantity="handleQuantityUpdate"
-  />
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProductStore } from '@/stores/product'
 import { storeToRefs } from 'pinia'
+import SEOHead from '@/components/SEOHead.vue';
 import ProductTitle from './productTitle.vue';
 import MainImage from './MainImage.vue';
 import ProductDescribe from './productDescribe.vue';
-import BottomSticyBar from './bottomSticyBar.vue';
-import ForYou from './forYou.vue';
-import IconBox from '../Home/icon-box.vue';
-import ProductAttributes from './attributes.vue'
-import ProductButtons from './buttons.vue'
 
 const route = useRoute()
 const productStore = useProductStore()
 const { product, loading, error } = storeToRefs(productStore)
+
+// SEO Computed Properties
+const seoTitle = computed(() => {
+  if (!product.value) return 'Product Details - The Modesse';
+  return `${product.value.name} | Premium Contemporary Womenswear - The Modesse`;
+});
+
+const seoDescription = computed(() => {
+  if (!product.value) return 'Discover premium contemporary womenswear at The Modesse.';
+  return `${product.value.name} - Premium contemporary womenswear from The Modesse. Handcrafted designer clothing made from finest Indian fabrics. ${product.value.description || 'Elegant design with modern sensibilities.'}`;
+});
+
+const seoKeywords = computed(() => {
+  if (!product.value) return 'premium contemporary clothing, designer womenswear, luxury fashion';
+  const productName = product.value.name.toLowerCase();
+  const category = product.value.category?.name || '';
+  return `${productName}, ${category}, premium contemporary clothing, designer womenswear, luxury fashion, modern ethnic wear, handcrafted garments, sustainable fashion, Indian designer clothes, boutique clothing, elegant dresses, contemporary fashion`;
+});
+
+const productSchema = computed(() => {
+  if (!product.value) return null;
+  
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.value.name,
+    "description": product.value.description || `${product.value.name} - Premium contemporary womenswear from The Modesse`,
+    "url": `https://themodesse.com/product/${product.value.slug}`,
+    "image": product.value.images || [],
+    "brand": {
+      "@type": "Brand",
+      "name": "The Modesse"
+    },
+    "category": product.value.category?.name || "Contemporary Womenswear",
+    "offers": {
+      "@type": "Offer",
+      "price": product.value.price,
+      "priceCurrency": "INR",
+      "availability": product.value.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      "url": `https://themodesse.com/product/${product.value.slug}`,
+      "seller": {
+        "@type": "Organization",
+        "name": "The Modesse"
+      }
+    },
+    "aggregateRating": product.value.rating ? {
+      "@type": "AggregateRating",
+      "ratingValue": product.value.rating,
+      "reviewCount": product.value.review_count || 0
+    } : undefined,
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Material",
+        "value": "Khadi, Handloom, Pure Cotton"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Made In",
+        "value": "India"
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Style",
+        "value": "Contemporary"
+      }
+    ]
+  };
+});
 
 const selectedProductData = ref({
   attributes: {},
@@ -92,8 +154,6 @@ const addToCart = () => {
     attributes: selectedProductData.value.attributes,
     price: selectedProductData.value.totalPrice
   }
-  console.log('Adding to cart:', cartItem)
-  // Add your cart logic here
 }
 
 const fetchProduct = async () => {
@@ -101,8 +161,12 @@ const fetchProduct = async () => {
 }
 
 onMounted(() => {
-  fetchProduct()
-})
+  fetchProduct();
+});
+
+watch(() => route.params.slug, () => {
+  fetchProduct();
+});
 </script>
 
 <style scoped>

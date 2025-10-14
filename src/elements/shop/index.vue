@@ -1,25 +1,23 @@
 <template>
     <div class="shop-page">
-        <ShopPageTitle :categoryName="categoryName" :productCount="productCount"
-            :categoryDescription="categoryDescription" />
-        <ShopCategorySwiper />
-        <!-- Product -->
+        <SEOHead 
+            :title="seoTitle"
+            :description="seoDescription"
+            :keywords="seoKeywords"
+            :schema="shopSchema"
+        />
+        
+        <ShopPageTitle :productCount="productCount"/>
         <div class="flat-spacing pt-0">
             <span class="br-line cus-width d-block bg-line"></span>
             <ShopControl @toggle-sidebar="$emit('toggle-sidebar')" v-model="filterOptions" />
             <div class="container">
                 <div class="row">
-                    <ShopSidebarFilter 
-                        :categories="categories"
-                        v-model="selectedCategories"
-                    />
                     <ProductGrid :products="sortedProducts" :loading="loading" :pagination="pagination"
-                        @pageChange="handlePageChange" />
+                        @page-changed="handlePageChange" />
                 </div>
             </div>
         </div>
-        <!-- /Product -->
-        <ShopIconBoxSwiper />
     </div>
 </template>
 
@@ -28,12 +26,10 @@ import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { getData } from '@/stores/getApi';
 
+import SEOHead from '@/components/SEOHead.vue';
 import ShopPageTitle from './ShopPageTitle.vue';
-import ShopCategorySwiper from './ShopCategorySwiper.vue';
 import ShopControl from './ShopControl.vue';
-import ShopSidebarFilter from './ShopSidebarFilter.vue';
 import ProductGrid from './ProductGrid.vue';
-import ShopIconBoxSwiper from './ShopIconBoxSwiper.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -41,10 +37,10 @@ const loading = ref(true);
 const products = ref([]);
 const filterOptions = ref({
     sort: 'default',
-    view: 'grid'
+    view: 'grid-3'
 });
 const pagination = ref({
-    current_page: 1,
+    current_page: Number(route.query.page) || 1,
     total: 0,
     per_page: 12,
     last_page: 1,
@@ -66,7 +62,6 @@ const selectedCategories = computed({
         } else {
             delete query.category_id;
         }
-        // If no filters are selected, redirect to /shop
         if (Object.keys(query).length === 0 && route.params.slug) {
             router.push('/shop');
         } else {
@@ -77,21 +72,67 @@ const selectedCategories = computed({
 
 const response = ref(null);
 
-const categoryName = computed(() => {
-    if (route.params.slug) {
-        const category = categories.value.find(cat => cat.slug === route.params.slug);
-        return category?.name || 'Category';
+const seoTitle = computed(() => {
+    const category = route.params.slug;
+    if (category) {
+        return `${category.charAt(0).toUpperCase() + category.slice(1)} Collection | Premium Contemporary Womenswear - The Modesse`;
     }
-    return 'All Products';
+    return 'Shop Premium Contemporary Womenswear | Designer Clothing Collection - The Modesse';
 });
 
-const productCount = computed(() => products.value.length);
-const categoryDescription = computed(() => {
-    if (route.params.slug) {
-        const category = categories.value.find(cat => cat.slug === route.params.slug);
-        return `Browse our collection of ${category?.name || 'products'}`;
+const seoDescription = computed(() => {
+    const category = route.params.slug;
+    if (category) {
+        return `Explore our exclusive ${category} collection featuring premium contemporary womenswear. Handcrafted designer clothing made from finest Indian fabrics - khadi, handloom, and pure cotton. Discover elegant dresses and modern ethnic wear.`;
     }
-    return 'Browse our complete collection of products';
+    return 'Discover premium contemporary womenswear at The Modesse. Browse our exclusive collection of handcrafted designer clothing made from finest Indian fabrics - khadi, handloom, and pure cotton. Elegant dresses, modern ethnic wear, and sustainable fashion for the sophisticated woman.';
+});
+
+const seoKeywords = computed(() => {
+    const category = route.params.slug;
+    const baseKeywords = 'premium contemporary clothing, designer womenswear, luxury fashion, modern ethnic wear, handcrafted garments, sustainable fashion, Indian designer clothes, boutique clothing, elegant dresses, contemporary fashion';
+    
+    if (category) {
+        return `${category} collection, ${category} dresses, ${category} clothing, ${baseKeywords}`;
+    }
+    return baseKeywords;
+});
+
+const shopSchema = computed(() => {
+    const category = route.params.slug;
+    return {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": seoTitle.value,
+        "description": seoDescription.value,
+        "url": `https://themodesse.com/shop${category ? '/' + category : ''}`,
+        "mainEntity": {
+            "@type": "ItemList",
+            "numberOfItems": productCount.value,
+            "itemListElement": sortedProducts.value.slice(0, 10).map((product, index) => ({
+                "@type": "ListItem",
+                "position": index + 1,
+                "item": {
+                    "@type": "Product",
+                    "name": product.name,
+                    "description": product.description,
+                    "url": `https://themodesse.com/product/${product.slug}`,
+                    "image": product.images?.[0] || '/src/assets/images/themodesse.jpg',
+                    "brand": {
+                        "@type": "Brand",
+                        "name": "The Modesse"
+                    },
+                    "offers": {
+                        "@type": "Offer",
+                        "price": product.price,
+                        "priceCurrency": "INR",
+                        "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+                        "url": `https://themodesse.com/product/${product.slug}`
+                    }
+                }
+            }))
+        }
+    };
 });
 
 const sortedProducts = computed(() => {
@@ -117,6 +158,10 @@ const sortedProducts = computed(() => {
     }
 
     return sorted;
+});
+
+const productCount = computed(() => {
+    return pagination.value.total || products.value.length;
 });
 
 const categories = ref([]);
@@ -170,27 +215,47 @@ const loadProducts = async () => {
     }
 };
 
-// Watch for route changes
-watch([() => route.params.slug, () => route.query.category_id], async () => {
-    pagination.value.current_page = 1; // Reset to first page on filter change
-    await loadProducts();
-}, { immediate: true });
+// Watch for route changes (category or slug)
+watch([() => route.params.slug, () => route.query.category_id], async ([newSlug, newCat], [oldSlug, oldCat]) => {
+    if (newSlug !== oldSlug || newCat !== oldCat) {
+        router.replace({ query: { ...route.query, page: 1 } });
+    }
+    // Do not call loadProducts here!
+});
 
 // Watch for sort changes
-watch(() => filterOptions.value.sort, async () => {
-    pagination.value.current_page = 1; // Reset to first page on sort change
-    await loadProducts();
+watch(() => filterOptions.value.sort, async (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+        router.replace({ query: { ...route.query, page: 1 } });
+    }
 });
 
 // Watch for selected categories changes
-watch(() => selectedCategories.value, async () => {
-    pagination.value.current_page = 1; // Reset to first page on category change
-    await loadProducts();
+watch(() => selectedCategories.value, async (newVal, oldVal) => {
+    if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+        router.replace({ query: { ...route.query, page: 1 } });
+    }
 }, { deep: true });
 
-const handlePageChange = async (page) => {
-    pagination.value.current_page = page;
+// Watch for route query page changes
+watch(() => route.query.page, async (newPage) => {
+    pagination.value.current_page = Number(newPage) || 1;
     await loadProducts();
+});
+
+const handlePageChange = async (page) => {
+    if (page === pagination.value.current_page) return;
+    router.replace({ query: { ...route.query, page } });
+    // loadProducts will be triggered by watcher
+};
+
+const handleClearAllFilters = () => {
+    // Remove all filter params from the query and reset to /shop
+    router.push({ path: '/shop' });
+    // Reset sort, view, and pagination
+    filterOptions.value.sort = 'default';
+    filterOptions.value.view = 'grid-3';
+    pagination.value.current_page = 1;
 };
 
 // Load categories on mount

@@ -18,19 +18,19 @@ export function useProductActions() {
             console.log('Received cart data:', cartData);
             
             // Validate cart data
-            if (!cartData.productId || !cartData.quantity || !cartData.selectedVariant) {
+            if (!cartData.productId || !cartData.quantity || !cartData.selectedVariants) {
                 console.error('Missing required data:', {
                     productId: cartData.productId,
                     quantity: cartData.quantity,
-                    selectedVariant: cartData.selectedVariant
+                    selectedVariants: cartData.selectedVariants
                 });
                 throw new Error('Missing required cart data');
             }
 
             // Format the data for the API
-            const formattedVariants = Object.keys(cartData.selectedVariant).map(key => ({
+            const formattedVariants = Object.keys(cartData.selectedVariants).map(key => ({
                 type: key,
-                value: cartData.selectedVariant[key]
+                value: cartData.selectedVariants[key]
             }));
 
             const formattedData = {

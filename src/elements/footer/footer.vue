@@ -1,14 +1,17 @@
 <template>
-    <footer class="footer">
-        <FooterTop />
+    <footer class="footer" style="border-top: 1px solid #0000002d;">
         <FooterBody />
-        <FooterBottom />
     </footer>
 </template>
 
 <script setup>
-import FooterTop from './FooterTop.vue'
 import FooterBody from './FooterBody.vue'
-import FooterBottom from './FooterBottom.vue'
 </script>
 
+<style scoped>
+@media (max-width: 576px) {
+    .footer {
+        margin-bottom: 40px;
+    }
+}
+</style>

@@ -10,7 +10,7 @@
                     <div class="sticky-info">
                         <h6 class="sticky-name">{{ product?.name }}</h6>
                         <div class="sticky-price">
-                            <span class="price-new">${{ product?.sale_price }}</span>
+                            <span class="price-new">${{ product?.price }}</span>
                             <span v-if="product?.discount_price" class="price-old">${{ product?.price }}</span>
                         </div>
                     </div>
@@ -81,7 +81,7 @@ const loading = ref(false)
 const success = ref(false)
 
 const calculateTotal = computed(() => {
-    return (product.value?.sale_price * quantity.value).toFixed(2)
+    return (product.value?.price * quantity.value).toFixed(2)
 })
 
 const increaseQuantity = () => {

@@ -1,5 +1,5 @@
 <template>
-    <div class="tf-product-total-quantity">
+    <div class="tf-product-total-quantity mb-3">
         <div v-if="addToCartError || addToCartSuccess" class="alert-container mb-3">
             <div v-if="addToCartError" class="alert alert-danger alert-dismissible fade show" role="alert">
                 {{ addToCartError }}
@@ -11,65 +11,30 @@
             </div>
         </div>
         <div class="group-btn">
-            <a href="" 
-               class="tf-btn btn-fill-2 text-uppercase fw-medium animate-btn"
-               :class="{ 'loading': loadingProductId === product?.id }"
-               @click.prevent="handleAddToCartClick()">
-                <span v-if="loadingProductId === product?.id" class="spinner-border spinner-border-sm me-2" role="status">
+            <a href="" class="tf-btn btn-fill-2 text-uppercase fw-medium animate-btn"
+                :class="{ 'loading': loadingProductId === product?.id }" @click.prevent="handleAddToCartClick()">
+                <span v-if="loadingProductId === product?.id" class="spinner-border spinner-border-sm me-2"
+                    role="status">
                     <span class="visually-hidden">Loading...</span>
                 </span>
                 <span v-else>Add to cart</span>
             </a>
-            
+
             <div class="group-btn-action">
-                <a href="javascript:void(0);" 
-                   class="tf-btn-icon hover-tooltip btn-add-wishlist" 
-                   @click.prevent="handleWishlistClick()"
-                   :class="{ 'active': isProductWishlisted }">
+                <a href="javascript:void(0);" class="tf-btn-icon hover-tooltip btn-add-wishlist"
+                    @click.prevent="handleWishlistClick()" :class="{ 'active': isProductWishlisted }">
                     <span class="icon icon-heart-2"></span>
                     <span class="tooltip">{{ isProductWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist' }}</span>
                 </a>
-                <a href="#compare" 
-                   data-bs-toggle="modal" 
-                   aria-controls="compare"
-                   class="tf-btn-icon hover-tooltip" 
-                   @click.prevent="openQuickView(product)"
-                   :class="{ 'active': isInCompare }">
-                    <span class="icon icon-compare"></span>
-                    <span class="tooltip">{{ isInCompare ? 'Remove from Compare' : 'Add to Compare' }}</span>
-                </a>
             </div>
-        </div>
-        <div class="pincode-check mb-3">
-            <div class="input-group">
-                <input 
-                    type="text" 
-                    v-model="pincode" 
-                    placeholder="Enter pincode" 
-                    maxlength="6"
-                    class="form-control"
-                    :class="{ 'is-valid': isPincodeValid }"
-                />
-                <button 
-                    class="btn btn-outline-primary" 
-                    @click="checkPincode"
-                    :disabled="isCheckingPincode"
-                >
-                    {{ isCheckingPincode ? 'Checking...' : 'Check' }}
-                </button>
-            </div>
-            <small class="text-muted">Check delivery availability for your area</small>
         </div>
         <small v-if="errorMessage" class="text-danger d-block mb-2">{{ errorMessage }}</small>
-        <button 
-            class="tf-btn w-100 text-uppercase fw-medium" 
-            @click="handleBuyNow"
-            :disabled="loadingProductId === props.product?.id"
-        >
+        <button class="tf-btn w-100 text-uppercase fw-medium" @click="handleBuyNow"
+            :disabled="loadingProductId === props.product?.id">
             <span v-if="loadingProductId === props.product?.id">
                 <i class="fas fa-spinner fa-spin me-2"></i>Processing...
             </span>
-            <span v-else>Buy it now</span>
+            <span v-else>Buy now</span>
         </button>
     </div>
 </template>
@@ -112,7 +77,7 @@ const props = defineProps({
 
 const totalPrice = computed(() => {
     if (!props.product) return '0.00';
-    const basePrice = props.product.sale_price || props.product.price || 0;
+    const basePrice = props.product.price || props.product.price || 0;
     return (basePrice * props.quantity).toFixed(2);
 });
 
@@ -129,9 +94,30 @@ const addToCartSuccess = ref('');
 const handleBuyNow = async () => {
     if (!props.product) return;
 
-    // Validate size selection
-    if (!props.selectedVariants || Object.keys(props.selectedVariants).length === 0) {
-        errorMessage.value = 'Please select a size before proceeding to checkout';
+    // Build list of required attributes from product schema if available
+    const requiredAttrs = Array.isArray(props.product?.attributes)
+        ? props.product.attributes.map(a => a?.name).filter(Boolean)
+        : [];
+
+    // Validate variants
+    const sv = props.selectedVariants || {};
+    if (requiredAttrs.length > 0) {
+        const missing = requiredAttrs.filter(k => !sv[k] || sv[k] === '');
+        if (missing.length) {
+            errorMessage.value = `Please select: ${missing.join(', ')}`;
+            return;
+        }
+    } else {
+        // Fallback: at least one selection should exist
+        if (!Object.keys(sv).length) {
+            errorMessage.value = 'Please select all options before proceeding to checkout';
+            return;
+        }
+    }
+
+    // Extra validation for Custom size: ensure measurements saved
+    if (sv['Size'] === 'Custom' && !sv['customMeasurements']) {
+        errorMessage.value = 'Please enter and save your custom measurements';
         return;
     }
 
@@ -141,15 +127,14 @@ const handleBuyNow = async () => {
         return;
     }
 
-    errorMessage.value = ''; // Clear error if validation passes
+    errorMessage.value = '';
 
     try {
-        // First add to cart
-        await handleAddToCartClick();
-        
-        // If add to cart was successful, proceed to checkout
-        if (!loadingProductId.value) {
-            router.push({ name: 'Checkout' });
+        // Add to cart without opening the cart UI
+        const ok = await handleAddToCartClick({ suppressOpenCart: true });
+        if (ok) {
+            // Go directly to checkout
+            await router.push({ path: '/checkout' });
         }
     } catch (error) {
         console.error('Error in buy now process:', error);
@@ -157,20 +142,20 @@ const handleBuyNow = async () => {
     }
 };
 
-const handleAddToCartClick = async () => {
-    console.log('Button clicked - handleAddToCartClick started');
+const handleAddToCartClick = async (options = {}) => {
     if (!props.product) {
-        console.log('No product found, returning');
-        return;
+        return false;
     }
 
-    // Validate size selection
-    if (!props.selectedVariants || Object.keys(props.selectedVariants).length === 0) {
-        addToCartError.value = 'Please select a size before adding to cart';
+    // Validate that all selectedVariants have a value (not empty string)
+    const variantKeys = Object.keys(props.selectedVariants || {});
+    const allSelected = variantKeys.length > 0 && variantKeys.every(key => props.selectedVariants[key] && props.selectedVariants[key] !== '');
+    if (!allSelected) {
+        addToCartError.value = 'Please select all options before adding to cart';
         setTimeout(() => {
             addToCartError.value = '';
         }, 3000);
-        return;
+        return false;
     }
 
     // Validate quantity
@@ -179,54 +164,53 @@ const handleAddToCartClick = async () => {
         setTimeout(() => {
             addToCartError.value = '';
         }, 3000);
-        return;
+        return false;
     }
 
-    addToCartError.value = ''; // Clear error if validation passes
-
-    console.log('Setting loading state for product:', props.product.id);
+    addToCartError.value = '';
     loadingProductId.value = props.product.id;
     try {
         const cartData = {
             productId: props.product.id,
             quantity: props.quantity,
-            selectedVariant: props.selectedVariants,
+            selectedVariants: props.selectedVariants,
             cartToken: localStorage.getItem('cartToken') || generateCartToken()
         };
-        console.log('Calling productActionsAddToCart with data:', cartData);
         const response = await productActionsAddToCart(cartData);
-        console.log('Response from productActionsAddToCart:', response);
-        
+
         if (response.success) {
             // Store cart token if it's a new one
             if (response.cartToken) {
                 localStorage.setItem('cartToken', response.cartToken);
             }
-            
+
             // Update cart count
             await cart.getCartCount();
-            
+
             // Show success state briefly
             successProductId.value = props.product.id;
             setTimeout(() => {
                 successProductId.value = null;
             }, 2000);
-            
+
             // Show success message
             addToCartSuccess.value = 'Product added to cart successfully';
             setTimeout(() => {
                 addToCartSuccess.value = '';
             }, 3000);
-            
+
             // Open cart if configured to do so
-            if (cart.openCartAfterAdd) {
+            const suppressOpenCart = options?.suppressOpenCart === true;
+            if (cart.openCartAfterAdd && !suppressOpenCart) {
                 cart.openCart();
             }
+            return true;
         } else {
             addToCartError.value = response.message || 'Failed to add product to cart';
             setTimeout(() => {
                 addToCartError.value = '';
             }, 3000);
+            return false;
         }
     } catch (error) {
         console.error('Error adding to cart:', error);
@@ -234,37 +218,23 @@ const handleAddToCartClick = async () => {
         setTimeout(() => {
             addToCartError.value = '';
         }, 3000);
+        return false;
     } finally {
         loadingProductId.value = null;
     }
 };
 
 const handleWishlistClick = async () => {
-    if (!props.product) return;
-
-    if (!auth.isAuthenticated) {
-        toast.error('Please login to add items to wishlist');
-        router.push({ 
-            name: 'Login',
-            query: { 
-                redirect: router.currentRoute.value.fullPath,
-                action: 'wishlist'
-            }
-        });
-        return;
-    }
-
+    const product = props.product;
+    if (!product || !product.id) return;
     try {
-        if (isProductWishlisted.value) {
-            await wishlist.removeFromWishlist(props.product.id);
-            toast.success('Product removed from wishlist');
+        if (wishlist.isWishlisted(product.id)) {
+            await wishlist.removeFromWishlist(product.id);
         } else {
-            await wishlist.addToWishlist(props.product.id);
-            toast.success('Product added to wishlist');
+            await wishlist.addToWishlist(product.id);
         }
     } catch (error) {
-        console.error('Error toggling wishlist:', error);
-        toast.error('Failed to update wishlist');
+        console.error('Error updating wishlist:', error);
     }
 };
 
@@ -284,7 +254,7 @@ const checkPincode = async () => {
         // For now, we'll simulate a check
         const response = await fetch(`/api/check-pincode/${pincode.value}`);
         const data = await response.json();
-        
+
         if (data.isValid) {
             isPincodeValid.value = true;
             toast.success('Delivery available at this pincode');
@@ -384,6 +354,7 @@ const isInCompare = computed(() => false); // Placeholder: replace with actual l
         transform: translateY(-10px);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;

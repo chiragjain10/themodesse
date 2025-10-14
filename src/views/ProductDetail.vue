@@ -90,6 +90,12 @@
                     </div>
                 </div>
             </div>
+
+            <Attributes
+              v-if="product && product.attributes"
+              :attributes="product.attributes"
+              @update:selected-variants="onSelectedVariantsUpdate"
+            />
         </div>
     </div>
 </template>
@@ -100,23 +106,28 @@ import { useRoute } from 'vue-router';
 import { getData } from '@/stores/getApi';
 import { useCartStore } from '@/stores/cart';
 import { useAuthStore } from '@/stores/auth';
+import { useProductStore } from '@/stores/product';
 import Loader from '@/components/Loader.vue';
 import Reviews from '@/elements/productDetails/reviews.vue';
+import Attributes from '@/elements/productDetails/attributes.vue';
 
 const route = useRoute();
 const cart = useCartStore();
 const auth = useAuthStore();
+const productStore = useProductStore();
 
 const product = ref(null);
 const loading = ref(true);
 const quantity = ref(1);
 const currentImage = ref('');
+const selectedVariants = ref({})
 
 const fetchProduct = async () => {
     loading.value = true;
     try {
         const response = await getData(`/api/products/${route.params.slug}`);
         product.value = response.data;
+        productStore.product = product.value;
         if (product.value?.thumbnail_image) {
             currentImage.value = product.value.thumbnail_image;
         }
@@ -130,6 +141,7 @@ const fetchProduct = async () => {
     } catch (error) {
         console.error('Error fetching product:', error);
         product.value = null;
+        productStore.product = null;
     } finally {
         loading.value = false;
     }
@@ -151,13 +163,21 @@ const decreaseQuantity = () => {
     }
 };
 
+function onSelectedVariantsUpdate(val) {
+  selectedVariants.value = val
+}
+
 const addToCart = async () => {
     if (!auth.isAuthenticated) {
         // Redirect to login or show login modal
         return;
     }
     try {
-        await cart.addToCart(product.value.id, quantity.value);
+        await cart.addToCart({
+            product_id: product.value.id,
+            quantity: quantity.value,
+            variants: selectedVariants.value
+        });
         // Show success message
     } catch (error) {
         console.error('Error adding to cart:', error);

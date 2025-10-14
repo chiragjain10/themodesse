@@ -8,12 +8,12 @@
                         <span></span>
                     </a>
                 </div>
-                <div class="col-xl-2 col-md-4 col-6">
-                    <RouterLink to="/" class="logo-site">
-                        <img :src="Logo" alt="" style="width: 325px;">
-                    </RouterLink>
+                <div class="col-xl-3 col-md-4 col-6">
+                    <a href="/" class="logo-site" @click="handleHomeClick">
+                        <img :src="Logo" alt="" style="width: 230px;">
+                    </a>
                 </div>
-                <div class="col-xl-8 d-none d-xl-block">
+                <div class="col-xl-7 d-none d-xl-block">
                     <NavigationMenu />
                 </div>
                 <div class="col-xl-2 col-md-4 col-3">
@@ -27,6 +27,7 @@
 
 <script setup>
 import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 import { useAuthStore } from '@/stores/auth'
 import { useWishlistStore } from '@/stores/wishlist'
@@ -34,12 +35,28 @@ import { useAppLoadingStore } from '@/stores/appLoading'
 import NavigationMenu from './NavigationMenu.vue'
 import HeaderIcons from './HeaderIcons.vue'
 
-import Logo from '@/assets/images/banner/Logo.png'
+import Logo from '@/assets/images/Logo.svg'
 
+const router = useRouter()
 const wishlist = useWishlistStore()
 const cart = useCartStore()
 const auth = useAuthStore()
 const appLoading = useAppLoadingStore()
+
+// Handle home click to refresh page
+const handleHomeClick = (event) => {
+    event.preventDefault()
+    
+    // If we're already on home page, refresh it
+    if (router.currentRoute.value.path === '/') {
+        window.location.reload()
+    } else {
+        // Navigate to home and then refresh
+        router.push('/').then(() => {
+            window.location.reload()
+        })
+    }
+}
 
 // Initialize wishlist and cart
 onMounted(async () => {

@@ -20,16 +20,16 @@
                                 @click="removeCoupon">Remove</button>
                         </div>
                     </div>
-                    <div v-else class="mb-2">
+                    <!-- <div v-else class="mb-2">
                         <div class="input-group">
                             <input v-model="couponInput" type="text" class="form-control" placeholder="Coupon code">
-                            <button class="btn btn-outline-primary" type="submit" :disabled="couponLoading">
+                            <button class="tf-btn btn-fill-2 text-uppercase fw-medium animate-btn" type="submit" :disabled="couponLoading">
                                 <span v-if="couponLoading" class="spinner-border spinner-border-sm me-1"></span>
                                 Apply
                             </button>
                         </div>
                         <div v-if="cart.couponError" class="text-danger small mt-1">{{ cart.couponError }}</div>
-                    </div>
+                    </div> -->
                     <p class="tax-text">
                         Taxes and shipping calculated at checkout
                     </p>
@@ -41,12 +41,12 @@
                     </div>
                 </div>
                 <div v-if="checkoutError" class="alert alert-danger mt-2">{{ checkoutError }}</div>
-                <button type="button" id="checkout-btn" class="tf-btn btn-fill fw-medium animate-btn w-100"
+                <button type="button" id="checkout-btn" class="tf-btn btn-fill-2 text-uppercase fw-medium animate-btn w-100"
                     :disabled="cartItems.length === 0" @click="handleCheckout">
                     CHECKOUT
                 </button>
             </form>
-            <p class="text-caption text-center text-we-accept">We accept</p>
+            <!-- <p class="text-caption text-center text-we-accept">We accept</p> -->
             <!-- <ul class="payment-methods-pills-row">
                 <li v-for="method in paymentMethods" :key="method.id" class="payment-method-pill-small">
                     <span v-if="method.name === 'cod'" class="pm-icon"><i class="fa fa-money-bill-wave"></i></span>
@@ -56,16 +56,16 @@
                     <span class="pm-name">{{ method.name.replace(/^(.)/, (c) => c.toUpperCase()) }}</span>
                 </li>
             </ul> -->
-            <div class="accepted-networks-row mt-2">
+            <!-- <div class="accepted-networks-row mt-2">
                 <img :src="visa" alt="Visa" class="network-icon" />
                 <img :src="mastercared" alt="Mastercard" class="network-icon" />
                 <img :src="amex" alt="Amex" class="network-icon" />
                 <img :src="paypal" alt="PayPal" class="network-icon" />
                 <img :src="upi" alt="UPI" class="network-icon" />
-            </div>
+            </div> -->
         </div>
         <!-- Testimonial slider can remain static or be made dynamic if needed -->
-        <div class="tes-slider tf-btn-swiper-item">
+        <!-- <div class="tes-slider tf-btn-swiper-item">
             <div dir="ltr" class="swiper tf-swiper" data-space-lg="30" data-space-md="20" data-space="15">
                 <div class="swiper-wrapper">
                     <div class="swiper-slide" v-for="testimonial in testimonials" :key="testimonial.id">
@@ -96,7 +96,7 @@
                     <i class="tf-sw-nav icon-arrow-right nav-next-swiper"></i>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -104,14 +104,14 @@
 import { computed, ref, onMounted } from 'vue';
 import { useCartStore } from '@/stores/cart';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { getData } from '@/stores/getApi';
 
-import visa from '@/assets/images/visa.png';
-import amex from '@/assets/images/amex.jpg';
-import mastercared from '@/assets/images/mastercard.png';
-import paypal from '@/assets/images/paypal.png';
-import upi from '@/assets/images/upi.png';
-import logoimage from '@/assets/images/banner/themodesse.jpg'
+// import visa from '@/assets/images/visa.png';
+// import amex from '@/assets/images/amex.jpg';
+// import mastercared from '@/assets/images/mastercard.png';
+// import paypal from '@/assets/images/paypal.png';
+// import upi from '@/assets/images/upi.png';
+import logoimage from '@/assets/images/themodesse.jpg'
 
 const props = defineProps({
     paymentMethods: {
@@ -127,7 +127,6 @@ const couponInput = ref(cart.couponCode || '');
 const couponLoading = ref(false);
 const termsAccepted = ref(false);
 const testimonials = ref([]);
-const paymentMethods = ref([]);
 const checkoutError = ref('');
 const router = useRouter();
 
@@ -155,9 +154,8 @@ const handleCheckout = () => {
 };
 
 onMounted(async () => {
-    // Fetch testimonials (reviews) from /api/home topRatings
     try {
-        const { data } = await axios.get('/api/home');
+        const { data } = await getData('/api/home');
         const reviews = [];
         if (data.topRatings) {
             data.topRatings.forEach(product => {

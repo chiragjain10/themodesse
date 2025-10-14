@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'KenokyLight3zezL';
+    src: url('fonts/KenokyLight3zezL.eot');
+    src: url('fonts/KenokyLight3zezL.eot') format('embedded-opentype'),
+         url('fonts/KenokyLight3zezL.woff2') format('woff2'),
+         url('fonts/KenokyLight3zezL.woff') format('woff'),
+         url('fonts/KenokyLight3zezL.ttf') format('truetype'),
+         url('fonts/KenokyLight3zezL.svg#KenokyLight3zezL') format('svg');
+}

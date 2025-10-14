@@ -4,12 +4,11 @@
         <div class="canvas-wrapper">
             <div class="canvas-header">
                 <h3 class="title fw-normal text-uppercase">shopping cart</h3>
-                <span class="icon-close link icon-close-popup" data-bs-dismiss="offcanvas"></span>
+                <span id="shoppingCartCloseBtn" class="icon-close link icon-close-popup" data-bs-dismiss="offcanvas"></span>
             </div>
             <div class="wrap list-file-delete">
                 <div class="tf-mini-cart-threshold">
-                    <h6 class="text fw-normal text-uppercase">Spend <span class="fw-medium">$100</span> more to get
-                        <span class="fw-medium">Free
+                    <h6 class="text fw-normal text-uppercase"><span class="fw-medium">Free
                             Shipping</span>
                     </h6>
                     <div class="tf-progress-bar tf-progress-ship">
@@ -20,7 +19,8 @@
                     <div class="tf-number-count">
                         <p class="text-uppercase"><span class="prd-count">{{ cartCount }}</span> products</p>
 
-                        <a href="javascript:void(0)" class="tf-btn-line style-line-2 clear-file-delete" @click.prevent="clearCart">
+                        <a href="javascript:void(0)" class="tf-btn-line style-line-2 clear-file-delete"
+                            @click.prevent="clearCart">
                             <span class="text-body">
                                 Empty cart
                             </span>
@@ -41,12 +41,13 @@
                             <ul v-else-if="cartItems && cartItems.length > 0" class="tf-mini-cart-items">
                                 <li v-for="item in cartItems" :key="item.id" class="tf-mini-cart-item file-delete">
                                     <div class="tf-mini-cart-image">
-                                        <RouterLink :to="`/product/${item.product?.slug}`">
+                                        <RouterLink :to="`/product/${item.product?.slug}`" @click="closeCartOffcanvas">
                                             <img :src="item.product?.image" :alt="item.product?.name">
                                         </RouterLink>
                                     </div>
                                     <div class="tf-mini-cart-info">
-                                        <RouterLink :to="`/product/${item.product?.slug}`" class="prd-name link">
+                                        <RouterLink :to="`/product/${item.product?.slug}`" class="prd-name link"
+                                            @click="closeCartOffcanvas">
                                             {{ item.product?.name }}
                                         </RouterLink>
                                         <div class="prd-quantity">
@@ -54,21 +55,27 @@
                                                 Qty:
                                             </p>
                                             <div class="wg-quantity style-2">
-                                                <button class="btn-quantity minus-quantity" @click="updateQuantity(item.item_id, Number(item.qty) - 1)" :disabled="Number(item.qty) <= 1"><i
+                                                <button class="btn-quantity minus-quantity"
+                                                    @click="updateQuantity(item.item_id, Number(item.qty) - 1)"
+                                                    :disabled="Number(item.qty) <= 1"><i
                                                         class="icon-minus"></i></button>
-                                                <input class="quantity-product" type="text" name="number" :value="item.qty" readonly>
-                                                <button class="btn-quantity plus-quantity" @click="updateQuantity(item.item_id, Number(item.qty) + 1)"><i
+                                                <input class="quantity-product" type="text" name="number"
+                                                    :value="item.qty" readonly>
+                                                <button class="btn-quantity plus-quantity"
+                                                    @click="updateQuantity(item.item_id, Number(item.qty) + 1)"><i
                                                         class="icon-plus"></i></button>
                                             </div>
                                         </div>
-                                        <a href="javascript:void(0)" class="tf-btn-line style-line-2 remove" @click.prevent="removeItem(item.item_id)">
+                                        <a href="javascript:void(0)" class="tf-btn-line style-line-2 remove"
+                                            @click.prevent="removeItem(item.item_id)">
                                             <span class="text-caption">
                                                 Remove
                                             </span>
                                         </a>
                                     </div>
                                     <p class="tf-mini-card-price h6 fw-normal">
-                                        ₹{{ (Number(item.product?.sale_price || item.product?.price || 0) * Number(item.qty)).toFixed(2) }}
+                                        ₹{{ (Number(item.product?.price || item.product?.price || 0) *
+                                            Number(item.qty)).toFixed(2) }}
                                     </p>
                                 </li>
                             </ul>
@@ -78,7 +85,7 @@
                         </div>
                     </div>
                     <div v-if="cartItems && cartItems.length > 0" class="tf-mini-cart-bottom">
-                        <div class="tf-mini-cart-tool">
+                        <!-- <div class="tf-mini-cart-tool">
                             <div class="tf-mini-cart-tool-btn btn-add-gift">
                                 <i class="icon icon-gift"></i>
                                 <p class="text-caption">Add gift wrap</p>
@@ -91,19 +98,20 @@
                                 <i class="icon icon-delivery-3"></i>
                                 <p class="text-caption">Shipping</p>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="tf-mini-cart-bottom-wrap">
                             <div class="tf-cart-totals-discounts">
                                 <h6 class="tf-cart-total-text fw-normal text-uppercase">total:</h6>
-                                <div class="tf-totals-total-value h6 fw-normal">${{ cartTotal.toFixed(2) }}</div>
+                                <div class="tf-totals-total-value h6 fw-normal">₹{{ cartTotal.toFixed(2) }}</div>
                             </div>
                             <div class="tf-mini-cart-view-checkout">
-                                <RouterLink to="/cart" class="tf-btn w-100 style-2">
+                                <RouterLink to="/cart" class="tf-btn w-100 style-2" @click="closeCartOffcanvas">
                                     <span class="fw-medium">
                                         GO TO CART
                                     </span>
                                 </RouterLink>
-                                <RouterLink to="/checkout" class="tf-btn btn-fill animate-btn w-100">
+                                <RouterLink to="/checkout" class="tf-btn btn-fill animate-btn w-100"
+                                    @click="closeCartOffcanvas">
                                     <span class="fw-medium">
                                         CHECKOUT
                                     </span>
@@ -220,32 +228,26 @@
 </template>
 
 <script setup>
-import { computed, onMounted, watch } from 'vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 import { RouterLink } from 'vue-router';
 import { useCartStore } from '@/stores/cart';
-import { useAuthStore } from '@/stores/auth';
 import { useToast } from 'vue-toast-notification';
 import { useRouter } from 'vue-router';
 
 const cart = useCartStore();
-const auth = useAuthStore();
 const toast = useToast();
-const router = useRouter();
-
 const cartItems = computed(() => cart.items);
 const cartCount = computed(() => cart.count);
 const cartTotal = computed(() => cart.total);
 const loading = computed(() => cart.loading);
 
-// Computed property for cart progress towards free shipping
 const freeShippingThreshold = 100;
 const cartProgress = computed(() => {
     if (!cart.total) return 0;
     const progress = (cart.total / freeShippingThreshold) * 100;
-    return Math.min(progress, 100); // Cap progress at 100%
+    return Math.min(progress, 100);
 });
 
-// Function to fetch cart data
 const fetchCartData = async () => {
     try {
         await cart.fetchCart();
@@ -254,20 +256,18 @@ const fetchCartData = async () => {
     }
 };
 
-// Function to update item quantity
 const updateQuantity = async (itemId, newQuantity) => {
-    if (newQuantity < 1) return; // Prevent quantity from going below 1
+    if (newQuantity < 1) return;
     try {
         await cart.updateItem(itemId, newQuantity);
-        // No need to refetch cart here, the store action should update the state reactively
+
     } catch (error) {
         console.error('Error updating cart item quantity:', error);
-        // Optionally show a toast error
-         toast.error('Failed to update item quantity');
+
+        toast.error('Failed to update item quantity');
     }
 };
 
-// Function to remove item from cart
 const removeItem = async (itemId) => {
     try {
         await cart.removeItem(itemId);
@@ -279,37 +279,49 @@ const removeItem = async (itemId) => {
     }
 };
 
-// Function to clear the cart
 const clearCart = async () => {
     try {
-        await cart.clearCart(); // Assuming a clearCart action exists in the store
-         toast.success('Cart cleared successfully');
+        await cart.clearCart();
+        toast.success('Cart cleared successfully');
     } catch (error) {
         console.error('Error clearing cart:', error);
-         toast.error('Failed to clear cart');
+        toast.error('Failed to clear cart');
     }
 };
 
-// Fetch cart data when the component is mounted
+const closeCartOffcanvas = () => {
+    const el = document.getElementById('shoppingCart');
+    if (el && window.bootstrap && window.bootstrap.Offcanvas) {
+        const offcanvas = window.bootstrap.Offcanvas.getOrCreateInstance(el);
+        offcanvas.hide();
+        document.querySelector(".offcanvas-backdrop").style.display = "none";
+        if (document.querySelector(".offcanvas-backdrop").classList.contains("show")) {
+            document.querySelector(".offcanvas-backdrop").classList.remove("show");
+        }
+    }
+};
+
+const router = useRouter();
+let cartOffcanvasCloseHook = null;
+
+function removeAllBackdrops() {
+    document.querySelectorAll('.offcanvas-backdrop, .modal-backdrop').forEach(el => el.remove());
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+    document.body.classList.remove('modal-open', 'offcanvas-open');
+}
+
 onMounted(() => {
+    cartOffcanvasCloseHook = router.afterEach(() => {
+        document.getElementById('shoppingCartCloseBtn')?.click();
+        removeAllBackdrops();
+    });
     fetchCartData();
 });
 
-// Watch for changes in cart state if needed, though computed properties should handle most reactivity
-// watch(() => cart.items, (newItems) => {
-//     console.log('Cart items updated:', newItems);
-// });
-
-// watch(() => cart.count, (newCount) => {
-//      console.log('Cart count updated:', newCount);
-// });
-
-// watch(() => cart.total, (newTotal) => {
-//     console.log('Cart total updated:', newTotal);
-// });
-
-// Note: The checkout button logic might need adjustments depending on authentication requirements for checkout.
-// Assuming checkout requires authentication, the RouterLink will handle navigation.
+onUnmounted(() => {
+    if (cartOffcanvasCloseHook) cartOffcanvasCloseHook();
+});
 </script>
 
 <style scoped>
@@ -355,7 +367,8 @@ onMounted(() => {
 }
 
 .tf-mini-cart-wrap {
-    max-height: 60vh; /* Adjust as needed */
+    max-height: 60vh;
+    /* Adjust as needed */
     overflow-y: auto;
 }
 
@@ -523,7 +536,7 @@ onMounted(() => {
 }
 
 .tf-mini-cart-tool-openable.show .tf-mini-cart-tool-content {
-     transform: translateY(0);
+    transform: translateY(0);
 }
 
 .tf-mini-cart-tool-text {
@@ -536,7 +549,8 @@ onMounted(() => {
     color: #555;
 }
 
-.tf-cart-tool-btns button, .tf-cart-tool-btns .tf-btn {
+.tf-cart-tool-btns button,
+.tf-cart-tool-btns .tf-btn {
     margin-bottom: 10px;
 }
 
@@ -582,7 +596,8 @@ onMounted(() => {
     border-radius: 4px;
 }
 
-#zipcode-message, #zipcode-success {
+#zipcode-message,
+#zipcode-success {
     margin-top: 10px;
     padding: 10px;
     border-radius: 4px;
@@ -606,9 +621,5 @@ onMounted(() => {
 
 .offcanvas.popup-shopping-cart.show {
     transform: translateX(0);
-}
-
-.offcanvas-backdrop.show {
-    opacity: 0.5;
 }
 </style>

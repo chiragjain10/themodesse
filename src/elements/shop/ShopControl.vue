@@ -6,7 +6,7 @@
                     <div class="tf-control-filter justify-content-between pe-xxl-30">
                         <button class="tf-btn-filter h5 link" @click="$emit('toggle-sidebar')">
                             <span class="icon icon-filter d-xl-none"></span>
-                            <span class="text">FILTER</span>
+                            <span class="text-filter">FILTER</span>
                         </button>
                         <button v-if="hasActiveFilters" @click="handleClearAll" class="btn-check-none tf-btn-line">
                             <span class="text-body">Clear all</span>
@@ -141,6 +141,7 @@ const handleClearAll = () => {
     border: none;
     background: none;
     cursor: pointer;
+    display: none;
 }
 
 .tf-btn-filter:hover {
@@ -168,6 +169,7 @@ const handleClearAll = () => {
     margin: 0;
     padding: 0;
     list-style: none;
+    display: none;
 }
 
 .tf-view-layout-switch {
@@ -201,6 +203,7 @@ const handleClearAll = () => {
 .form-select:hover {
     border-color: #999;
 }
+
 
 @media (max-width: 767px) {
     .tf-control-filter {

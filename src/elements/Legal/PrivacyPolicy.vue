@@ -19,113 +19,57 @@
   <section class="legal-section">
     <div class="container">
       <div class="policy-card">
-        <div class="policy-icon">
-          <svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#F5F5F5"/><path d="M13 27V15a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v12" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
         <div class="policy-content">
-          <h2 class="policy-title">1. Information We Collect</h2>
-          <p>At The Modesse, we collect information to provide better services to our customers:</p>
+          <h2 class="policy-title">1. What We Collect</h2>
           <ul>
-            <li>Personal information (name, email, phone number, address)</li>
-            <li>Payment information (processed securely through our payment gateway)</li>
-            <li>Order history and preferences</li>
-            <li>Device and usage information</li>
+            <li>Name, email, phone number, billing and shipping addresses</li>
+            <li>Order and transaction information</li>
+            <li>Device data and browsing behavior via cookies and analytics</li>
           </ul>
         </div>
       </div>
+
       <div class="policy-card">
-        <div class="policy-icon">
-          <svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#F5F5F5"/><path d="M20 13v14" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 20h14" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
         <div class="policy-content">
-          <h2 class="policy-title">2. How We Use Your Information</h2>
-          <p>We use the collected information for:</p>
+          <h2 class="policy-title">2. How We Use It</h2>
           <ul>
-            <li>Processing and fulfilling your orders</li>
-            <li>Communicating about your orders and account</li>
-            <li>Sending promotional offers (with your consent)</li>
-            <li>Improving our website and services</li>
-            <li>Preventing fraud and ensuring security</li>
+            <li>To process and ship your orders</li>
+            <li>To communicate about your purchase or respond to queries</li>
+            <li>To improve website functionality and customer experience</li>
+            <li>To send promotional content (if you opt in)</li>
           </ul>
         </div>
       </div>
+
       <div class="policy-card">
-        <div class="policy-icon">
-          <svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#F5F5F5"/><path d="M13 27V15a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v12" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
         <div class="policy-content">
-          <h2 class="policy-title">3. Information Sharing</h2>
-          <p>We share your information with:</p>
+          <h2 class="policy-title">3. Data Security</h2>
           <ul>
-            <li>Payment processors for secure transactions</li>
-            <li>Shipping partners for order delivery</li>
-            <li>Service providers who assist in our operations</li>
-            <li>Legal authorities when required by law</li>
+            <li>Payments are handled via encrypted third-party gateways. We do not store sensitive payment information</li>
+            <li>Your data will never be sold, rented, or shared with unauthorized third parties</li>
           </ul>
         </div>
       </div>
+
       <div class="policy-card">
-        <div class="policy-icon">
-          <svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#F5F5F5"/><path d="M20 13v14" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 20h14" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
         <div class="policy-content">
-          <h2 class="policy-title">4. Data Security</h2>
-          <p>We implement security measures to protect your information:</p>
-          <ul>
-            <li>SSL encryption for data transmission</li>
-            <li>Secure payment processing</li>
-            <li>Regular security assessments</li>
-            <li>Limited employee access to personal data</li>
-          </ul>
+          <h2 class="policy-title">4. Cookies</h2>
+          <p>Our website uses cookies to personalize your browsing experience. You can modify cookie preferences through your browser.</p>
         </div>
       </div>
+
       <div class="policy-card">
-        <div class="policy-icon">
-          <svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#F5F5F5"/><path d="M13 27V15a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v12" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
         <div class="policy-content">
-          <h2 class="policy-title">5. Your Rights</h2>
-          <p>You have the right to:</p>
-          <ul>
-            <li>Access your personal information</li>
-            <li>Correct inaccurate data</li>
-            <li>Request deletion of your data</li>
-            <li>Opt-out of marketing communications</li>
-            <li>File a complaint with regulatory authorities</li>
-          </ul>
+          <h2 class="policy-title">5. Third-Party Links</h2>
+          <p>Our website may contain links to external platforms. We are not responsible for their privacy practices.</p>
         </div>
       </div>
+
       <div class="policy-card">
-        <div class="policy-icon">
-          <svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#F5F5F5"/><path d="M20 13v14" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 20h14" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
         <div class="policy-content">
-          <h2 class="policy-title">6. Cookies and Tracking</h2>
-          <p>We use cookies to:</p>
-          <ul>
-            <li>Remember your preferences</li>
-            <li>Analyze website traffic</li>
-            <li>Improve user experience</li>
-            <li>Provide personalized content</li>
-          </ul>
+          <h2 class="policy-title">6. Your Rights</h2>
+          <p>You may request access, correction, or deletion of your personal data by writing to us at <a href="mailto:hello@themodesse.com" class="contact-link">hello@themodesse.com</a></p>
         </div>
-      </div>
-      <div class="policy-card">
-        <div class="policy-icon">
-          <svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#F5F5F5"/><path d="M13 27V15a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v12" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="policy-content">
-          <h2 class="policy-title">7. Contact Us</h2>
-          <p>For privacy-related inquiries, contact us at:</p>
-          <ul>
-            <li>Email: privacy@bsglow.com</li>
-            <li>Phone: +91 6267482082</li>
-            <li>Address: Junior HIG, CH 64, MR 10 Rd, opposite Hira Nagar, Sukhliya, Indore, Madhya Pradesh 452010</li>
-          </ul>
-        </div>
-      </div>
-      <div class="policy-footer">
-        <p class="last-updated">Last Updated: {{ new Date().toLocaleDateString() }}</p>
       </div>
     </div>
   </section>
@@ -154,10 +98,52 @@ export default {
   background: #fff;
   padding: 40px 0 60px 0;
 }
+
+.policy-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 30px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 15px;
+  border: 1px solid #dee2e6;
+}
+
+.policy-main-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #B88E2F;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.policy-date {
+  font-size: 1.1rem;
+  color: #6c757d;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.policy-intro {
+  font-size: 1.2rem;
+  color: #495057;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.contact-link {
+  color: #B88E2F;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.contact-link:hover {
+  text-decoration: underline;
+}
 .policy-card {
   display: flex;
   align-items: flex-start;
-  background: #faf7f2;
+  background: #f7f7f7;
   border-radius: 18px;
   box-shadow: 0 2px 16px rgba(184, 142, 47, 0.07);
   padding: 32px 28px;
@@ -203,6 +189,19 @@ export default {
   font-size: 0.98rem;
 }
 @media (max-width: 767px) {
+  .policy-header {
+    padding: 20px 15px;
+    margin-bottom: 30px;
+  }
+  
+  .policy-main-title {
+    font-size: 1.8rem;
+  }
+  
+  .policy-intro {
+    font-size: 1rem;
+  }
+  
   .policy-card {
     flex-direction: column;
     align-items: flex-start;

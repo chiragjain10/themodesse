@@ -65,13 +65,25 @@ export const useAuthStore = defineStore('auth', {
                 throw error;
             }
         },
+        
+        setUser(user) {
+            this.user = user;
+            this.isAuthenticated = true;
+        },
+        
+        setToken(token) {
+            this.token = token;
+            localStorage.setItem('token', token);
+            this.isAuthenticated = true;
+        },
         async register(userData) {
             try {
                 const response = await axios.post('/api/register', {
                     name: userData.name,
                     email: userData.email,
                     password: userData.password,
-                    password_confirmation: userData.confirmPassword
+                    password_confirmation: userData.confirmPassword,
+                    phone: userData.phone
                 });
                 this.userLoaded = true;
                 return response.data;

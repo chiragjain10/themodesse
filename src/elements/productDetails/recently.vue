@@ -59,8 +59,8 @@
                   {{ product.name }}
                 </a>
                 <div class="price-wrap">
-                  <span class="price-new h5">${{ product.sale_price || product.price }}</span>
-                  <span v-if="product.sale_price" class="price-old fw-normal">${{ product.price }}</span>
+                  <span class="price-new h5">${{ product.price || product.price }}</span>
+                  <span v-if="product.price" class="price-old fw-normal">${{ product.price }}</span>
                 </div>
               </div>
             </div>

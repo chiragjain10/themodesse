@@ -20,43 +20,45 @@
                         <i class="icon icon-heart-2 mb-4" style="font-size: 48px; color: #ff6b6b;"></i>
                         <h3>Your wishlist is empty</h3>
                         <p>Add items to your wishlist to keep track of products you love.</p>
-                        <RouterLink to="/shop" class="btn btn-primary mt-3">Continue Shopping</RouterLink>
+                        <RouterLink to="/shop" class="tf-btn btn-fill-2 text-uppercase fw-medium animate-btn">Continue
+                            Shopping</RouterLink>
                     </div>
                 </div>
                 <div v-else class="col-12">
                     <div class="row">
                         <div v-for="item in wishlist.items" :key="item.id" class="col-6 col-md-4 col-lg-3 mb-4">
-                            <div class="card_product--V01">
+                            <div class="card_product--V01 card p-2">
                                 <div class="card_product-wrapper">
                                     <RouterLink :to="`/product/${item.product?.slug}`" class="product-img">
-                                        <img :src="item.product?.image" :alt="item.product?.name" class="lazyload img-product">
-                                        <img :src="item.product?.hover_image || item.product?.image" :alt="item.product?.name" class="lazyload img-hover">
+                                        <img :src="item.product?.thumbnail_image" :alt="item.product?.name"
+                                            class="lazyload img-product">
+                                        <img :src="item.product?.gallery_images[2] || item.product?.thumbnail_image"
+                                            :alt="item.product?.name" class="lazyload img-hover">
                                     </RouterLink>
-                                    <ul class="list-product-btn d-none d-md-flex">
+                                    <ul class="list-product-btn">
                                         <li class="wishlist">
-                                            <a href="javascript:void(0);" class="hover-tooltip tooltip-left box-icon active"
-                                               @click.prevent="handleRemoveFromWishlist(item.product?.id)"
-                                               :class="{ 'loading': loadingWishlistId === item.product?.id }">
-                                                <span class="icon">
-                                                    <i v-if="loadingWishlistId === item.product?.id" class="icon-spinner spinner-border-spin"></i>
-                                                    <i v-else class="icon-heart-2"></i>
-                                                </span>
+                                            <a href="javascript:void(0);" class="hover-tooltip tooltip-left box-icon"
+                                                @click.prevent="handleRemoveFromWishlist(item.product_id)">
+                                                <span class="fa fa-trash"></span>
                                                 <span class="tooltip">Remove from Wishlist</span>
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="javascript:void(0);" class="tf-btn-line style-line-2 " 
-                                                @click.prevent="handleAddToCart(item.product)"
-                                                :disabled="loadingProductId === item.product.id">
-                                                 <span v-if="loadingProductId === item.product.id" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                 <span v-else-if="successProductId === item.product.id" class="icon icon-check"></span>
-                                                 <span v-else>Add to Cart</span>
+                                            <a href="javascript:void(0);" class="hover-tooltip tooltip-left box-icon"
+                                                @click.prevent="handleAddToCartClick(product)"
+                                                :disabled="loadingProductId === product?.id">
+                                                <i v-if="loadingProductId === product?.id"
+                                                    class="fas fa-spinner fa-spin"></i>
+                                                <i v-else-if="successProductId === product?.id"
+                                                    class="icon icon-check"></i>
+                                                <i v-else class="icon icon-shop-cart"></i>
+                                                <span class="tooltip">Quick Add</span>
                                             </a>
                                         </li>
                                         <li>
                                             <a href="#quickView" data-bs-toggle="modal"
-                                               class="hover-tooltip tooltip-left box-icon quickview"
-                                               @click="openQuickView(item.product)">
+                                                class="hover-tooltip tooltip-left box-icon quickview"
+                                                @click="openQuickViewClick(product)">
                                                 <span class="icon icon-view"></span>
                                                 <span class="tooltip">Quick View</span>
                                             </a>
@@ -65,10 +67,11 @@
                                 </div>
                                 <div class="product-details">
                                     <h3 class="product-name">
-                                        <RouterLink :to="`/product/${item.product?.slug}`">{{ item.product?.name }}</RouterLink>
+                                        <RouterLink :to="`/product/${item.product?.slug}`">{{ item.product?.name }}
+                                        </RouterLink>
                                     </h3>
                                     <div class="product-price">
-                                        <span class="price">₹{{ item.product?.sale_price }}</span>
+                                        <span class="price">₹{{ item.product?.price }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -94,47 +97,42 @@ const cart = useCartStore()
 const quickView = useQuickViewStore()
 const toast = useToast()
 
-// Loading and success states
 const loading = computed(() => wishlist.loading)
-const loadingWishlistId = ref(null)
 const loadingProductId = ref(null)
 const successProductId = ref(null)
 
-// Methods
-const handleAddToCart = async (product) => {
+const handleAddToCartClick = async (product) => {
     if (!product) return;
 
-    loadingProductId.value = product.id; // Set loading for this product
-    successProductId.value = null; // Reset success state
+    loadingProductId.value = product?.id;
+    successProductId.value = null;
 
     try {
         const cartData = {
-            productId: product.id,
+            productId: product?.id,
             quantity: 1,
             cartToken: localStorage.getItem('cartToken') || generateCartToken()
         };
 
         const response = await cart.addToCart(cartData);
+
+        if (response.status === 'success') {
         
-        if (response.success) {
-            // Store cart token if it's a new one
             if (response.cartToken) {
                 localStorage.setItem('cartToken', response.cartToken);
             }
-            
-            // Update cart count
-            await cart.getCartCount();
-            
-            // Show success message
-            toast.success('Product added to cart successfully');
-            
-            successProductId.value = product.id; // Set success for this product
-            setTimeout(() => {
-                successProductId.value = null; // Reset success after a delay
-            }, 2000); // 2 second delay for checkmark
 
-            // Remove from wishlist
-            await wishlist.removeFromWishlist(product.id);
+        
+            await cart.getCartCount();
+
+        
+            toast.success('Product added to cart successfully');
+
+            successProductId.value = product?.id;
+            setTimeout(() => {
+                successProductId.value = null;
+            }, 2000);
+
         } else {
             toast.error(response.message || 'Failed to add product to cart');
         }
@@ -142,7 +140,7 @@ const handleAddToCart = async (product) => {
         console.error('Error adding to cart:', error);
         toast.error('Failed to add product to cart');
     } finally {
-        loadingProductId.value = null; // Set loading to false
+        loadingProductId.value = null;
     }
 };
 
@@ -156,7 +154,10 @@ const handleRemoveFromWishlist = async (productId) => {
     }
 };
 
-// Helper function to generate a cart token
+const openQuickViewClick = (product) => {
+    openQuickView(product);
+};
+
 const generateCartToken = () => {
     return 'cart_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 };
@@ -165,7 +166,6 @@ const openQuickView = (product) => {
     quickView.openQuickView(product)
 }
 
-// Initialize wishlist when component mounts
 onMounted(async () => {
     try {
         await wishlist.fetchWishlist()
@@ -211,7 +211,9 @@ onMounted(async () => {
 }
 
 @keyframes spinner-border {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .icon-spinner {
@@ -233,7 +235,7 @@ onMounted(async () => {
 
 .list-product-btn {
     position: absolute;
-    top: 10px;
+    top: 25%;
     right: 10px;
     display: flex;
     flex-direction: column;
@@ -253,7 +255,7 @@ onMounted(async () => {
     justify-content: center;
     background: white;
     border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
 }
 

@@ -42,8 +42,6 @@
         <label class="ls-m">or Login With</label>
         <div class="social-links mt-2">
           <a href="#" class="social-link social-google fab fa-google border-no mx-1"></a>
-          <a href="#" class="social-link social-facebook fab fa-facebook-f border-no mx-1"></a>
-          <a href="#" class="social-link social-twitter fab fa-twitter border-no mx-1"></a>
         </div>
       </div>
       <p class="text-center mt-3">Don't have an account? <RouterLink to="/register">Register</RouterLink></p>
@@ -91,12 +89,6 @@ const handleLogin = async (event) => {
     if (authStore.isAuthenticated) {
       console.log('Login successful, user:', authStore.user);
 
-      // Show success message
-      // errorMessage.value = 'Login successful! Redirecting...'; // Removed to avoid showing in the new page
-
-      // Add a small delay before redirect
-      // await new Promise(resolve => setTimeout(resolve, 1000)); // Removed delay
-
       // Check if there's a pending cart item
       const pendingCartItem = localStorage.getItem('pendingCartItem');
       if (pendingCartItem) {
@@ -120,7 +112,7 @@ const handleLogin = async (event) => {
         // Normal redirect
         // const redirectTo = route.query.redirect || '/';
         // router.replace(redirectTo);
-        window.location.href = route.query.redirect || '/';
+        window.location.href = route.query.redirect || '/account';
       }
     } else {
       console.log('Login failed - not authenticated');

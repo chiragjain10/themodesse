@@ -1,117 +1,79 @@
 <template>
     <!-- Mobile Menu -->
     <div class="offcanvas offcanvas-start canvas-mb" id="mobileMenu">
-        <span class="icon-close-popup" data-bs-dismiss="offcanvas">
+        <span id="mobileMenuCloseBtn" class="icon-close-popup" data-bs-dismiss="offcanvas">
             <i class="icon-close"></i>
         </span>
         <div class="mb-canvas-content">
             <div class="mb-body">
                 <div class="mb-content-top">
                     <form class="form-search">
-                        <fieldset>
+                        <fieldset style="position:relative;">
                             <input type="text" placeholder="Search for anything..." class="" name="text" tabindex="0"
-                                value="" aria-required="true">
+                                v-model="searchText" aria-required="true" autocomplete="off" @focus="filterProducts" />
+                            <ul v-if="showDropdown || searchLoading" class="search-dropdown">
+                                <li v-if="searchLoading">Loading...</li>
+                                <li v-else v-for="product in filteredProducts" :key="product.id" @click="goToProduct(product.slug)">
+                                    <span>{{ product.name }}</span>
+                                </li>
+                            </ul>
                         </fieldset>
                         <button type="submit" class="link"><i class="icon icon-search"></i></button>
                     </form>
                     <ul class="nav-ul-mb" id="wrapper-menu-navigation">
                         <li class="nav-mb-item">
-                            <a href="#dropdown-menu-shop" class="collapsed mb-menu-link" data-bs-toggle="collapse"
-                                aria-expanded="true" aria-controls="dropdown-menu-shop">
-                                <span>Categories</span>
+                            <a href="#dropdown-menu-shop" class="collapsed mb-menu-link" data-bs-toggle="collapse" data-bs-target="#dropdown-menu-shop"
+                                aria-expanded="false" aria-controls="dropdown-menu-shop">
+                                <span>Shop</span>
                                 <span class="btn-open-sub"></span>
                             </a>
                             <div id="dropdown-menu-shop" class="collapse">
                                 <ul class="sub-nav-menu">
-                                    <li v-for="category in categories" :key="category.id">
-                                        <RouterLink :to="{
-                                            path: '/shop',
-                                            query: { category_id: category.id }
-                                        }" class="sub-nav-link">
-                                            <span>{{ category.name }}</span>
+                                    <li>
+                                        <RouterLink :to="{ path: '/shop-by-category' }" class="sub-nav-link" @click="closeMobileMenu">
+                                            <span>Shop by Category</span>
                                         </RouterLink>
-                                        <div v-if="category.sub_categories && category.sub_categories.length > 0" 
-                                            :id="'sub-' + category.slug" class="collapse">
-                                            <ul class="sub-nav-menu sub-menu-level-2">
-                                                <li v-for="subCategory in category.sub_categories" :key="subCategory.id">
-                                                    <RouterLink :to="{
-                                                        path: '/shop',
-                                                        query: { 
-                                                            category_id: category.id,
-                                                            sub_category_id: subCategory.id 
-                                                        }
-                                                    }" class="sub-nav-link">
-                                                        {{ subCategory.name }}
-                                                    </RouterLink>
-                                                </li>
-                                            </ul>
-                                        </div>
+                                    </li>
+                                    <li>
+                                        <RouterLink :to="{ path: '/shop-by-edits' }" class="sub-nav-link" @click="closeMobileMenu">
+                                            <span>Shop by Edits</span>
+                                        </RouterLink>
+                                    </li>
+                                    <li>
+                                        <RouterLink :to="{ path: '/product-collection', query: { key: 'collections', label: 'Collections' } }" class="sub-nav-link disabled" @click="closeMobileMenu">
+                                            <span>Shop by Collection</span>
+                                        </RouterLink>
+                                    </li>
+                                    <li>
+                                        <span class="sub-nav-link disabled">Best Deals</span>
                                     </li>
                                 </ul>
                             </div>
                         </li>
                         <li class="nav-mb-item">
-                            <RouterLink to="/about" class="mb-menu-link">About Us</RouterLink>
+                            <RouterLink to="/about" class="mb-menu-link" @click="closeMobileMenu">About Us</RouterLink>
                         </li>
                         <li class="nav-mb-item">
-                            <RouterLink to="/contact" class="mb-menu-link">Contact Us</RouterLink>
+                            <RouterLink to="/contact" class="mb-menu-link" @click="closeMobileMenu">Contact Us</RouterLink>
                         </li>
                     </ul>
                 </div>
                 <div class="mb-other-content">
-                    <div class="group-icon">
-                        <RouterLink to="/wishlist" class="site-nav-icon">
-                            <i class="icon icon-hearth"></i>
-                            Wishlist
-                        </RouterLink>
-                        <p data-bs-dismiss="offcanvas">
-                            <a href="#log" data-bs-toggle="modal" class="site-nav-icon">
-                                <i class="icon icon-user"></i>
-                                Login
+                    <div class="mb-help-heading">Need Help?</div>
+                    <ul class="store-info-list">
+                        <li>
+                            <span class="caption">Email:</span>
+                            <a href="mailto:hello@themodesse.com" class="link text-main-4">
+                                hello@themodesse.com
                             </a>
-                        </p>
-                    </div>
-                    <div class="mb-notice">
-                        <a href="contact-us.html" class="text-need">Need Help?</a>
-                    </div>
-                    <ul class="mb-info">
-                        <li>
-                            <p>Address:
-                                <a href="https://www.google.com/maps?q=123+Yarran+St,+Punchbowl,+NSW+2196,+Australia"
-                                    class="fw-medium" target="_blank">
-                                    123 Yarran st, Punchbowl, NSW 2196, Australia
-                                </a>
-                            </p>
                         </li>
                         <li>
-                            Email:
-                            <a href="mailto:hello@vemus.com" class="fw-medium">hello@vemus.com</a>
-                        </li>
-                        <li>
-                            Phone:
-                            <a href="tel:6483441233" class="fw-medium">(64) 8344 1233</a>
+                            <span class="caption">Phone:</span>
+                            <a href="tel:+919300125126" class="link text-main-4">
+                                +91 93001 25126
+                            </a>
                         </li>
                     </ul>
-                </div>
-            </div>
-            <div class="mb-bottom">
-                <div class="bottom-bar-language">
-                    <div class="tf-currencies">
-                        <select class="tf-dropdown-select style-default type-currencies">
-                            <option selected>USD ($)</option>
-                            <option>EUR (€)</option>
-                            <option>EUR (€)</option>
-                            <option>VND (₫)</option>
-                        </select>
-                    </div>
-                    <div class="tf-languages">
-                        <select class="tf-dropdown-select style-default type-languages">
-                            <option>English</option>
-                            <option>العربية</option>
-                            <option>简体中文</option>
-                            <option>اردو</option>
-                        </select>
-                    </div>
                 </div>
             </div>
         </div>
@@ -120,22 +82,102 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { getData } from '@/stores/getApi';
 
+const searchText = ref('');
+const allProducts = ref([]);
+const filteredProducts = ref([]);
+const showDropdown = ref(false);
+const searchLoading = ref(false);
+const router = useRouter();
+let fetchTimeout = null;
 const categories = ref([]);
 
-const loadCategories = async () => {
+const fetchProducts = async () => {
+    searchLoading.value = true;
     try {
-        const response = await getData('/api/home/categories');
-        categories.value = response.categories || [];
+        const response = await getData('/api/products');
+        allProducts.value = response.data || [];
+        filterProducts();
     } catch (error) {
-        console.error('Error loading categories:', error);
+        allProducts.value = [];
+        filteredProducts.value = [];
+    } finally {
+        searchLoading.value = false;
     }
 };
 
+const filterProducts = () => {
+    if (!searchText.value.trim()) {
+        filteredProducts.value = [];
+        showDropdown.value = false;
+        return;
+    }
+    const search = searchText.value.trim().toLowerCase();
+    filteredProducts.value = allProducts.value.filter(p => p.name.toLowerCase().includes(search));
+    showDropdown.value = filteredProducts.value.length > 0;
+};
+
+watch(searchText, (val) => {
+    clearTimeout(fetchTimeout);
+    if (!val.trim()) {
+        filteredProducts.value = [];
+        showDropdown.value = false;
+        return;
+    }
+    fetchTimeout = setTimeout(() => {
+        if (allProducts.value.length === 0) {
+            fetchProducts();
+        } else {
+            filterProducts();
+        }
+    }, 300);
+});
+
+const closeMobileMenu = () => {
+    document.getElementById('mobileMenuCloseBtn')?.click();
+    removeAllBackdrops();
+};
+
+const goToProduct = (slug) => {
+    showDropdown.value = false;
+    searchText.value = '';
+    closeMobileMenu();
+    router.push(`/product/${slug}`);
+};
+
+const fetchCategories = async () => {
+  try {
+    const response = await getData('/api/home/categories');
+    categories.value = response.categories || [];
+  } catch (error) {
+    categories.value = [];
+  }
+};
+
+let offcanvasCloseHook = null;
+
 onMounted(() => {
-    loadCategories();
+    fetchCategories();
+    // Auto-close mobile menu on route change
+    offcanvasCloseHook = router.afterEach(() => {
+        // Simulate click on the close button with data-bs-dismiss="offcanvas"
+        document.getElementById('mobileMenuCloseBtn')?.click();
+        // Remove all lingering backdrops and restore body
+        removeAllBackdrops();
+    });
+});
+
+function removeAllBackdrops() {
+    document.querySelectorAll('.offcanvas-backdrop, .modal-backdrop').forEach(el => el.remove());
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+}
+
+onUnmounted(() => {
+    if (offcanvasCloseHook) offcanvasCloseHook();
 });
 </script>
 
@@ -159,5 +201,73 @@ onMounted(() => {
 
 .sub-menu-level-2 .sub-nav-link {
     padding: 0.5rem 1rem;
+}
+.sub-nav-link.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+.mb-other-content {
+  padding: 24px 0 0 0;
+  border-top: 1px solid #eee;
+  margin-top: 24px;
+}
+.mb-help-heading {
+  font-weight: 700;
+  color: #222;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  margin-top: 0;
+  border-left: 3px solid #deb973;
+  padding-left: 12px;
+  font-size: inherit;
+}
+.store-info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.store-info-list li {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+}
+.store-info-list .caption {
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 2px;
+}
+.store-info-list .link {
+  color: #1a73e8;
+  text-decoration: underline;
+  word-break: break-word;
+}
+.store-info-list .link:hover {
+  color: #deb973;
+  text-decoration: underline;
+}
+.search-dropdown {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    z-index: 100;
+    max-height: 220px;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.search-dropdown li {
+    padding: 12px 18px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 16px;
+}
+.search-dropdown li:hover {
+    background: #f8f8f8;
 }
 </style>

@@ -1,39 +1,3 @@
-/**
- *Select Image
- *Button Quantity
- *Delete File
- *Go Top
- *Variant Picker
- *Change Value
- *Sidebar Mobile
- *Check Active
- *Button Loading
- *Stagger Wrap
- *Modal Second
- *Header Sticky
- *Auto Popup
- *Toggle Control
- *Total Price Variant
- *Scroll Grid Product
- *Hover Image Cursor
- *Handle Progress
- *Handle Footer
- *Infinite Slide
- *Video Popup
- *Update Bundle Total
- *Add Wishlist
- *Handle Sidebar Filter
- *Estimate Shipping
- *Countdown Custom
- *Coupon Copy
- *Height Table
- *Animation Custom
- *Parallaxie
- *Update Compare Empty
- *Delete Wishlist
- *Preloader
- */
-
  (function ($) {
     "use strict";
 

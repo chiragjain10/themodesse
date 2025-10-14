@@ -1,34 +1,29 @@
 <template>
     <div class="tf-product-info-heading">
-        <ul class="product-info-rate rate-wrap">
-            <li v-for="star in 5" :key="star">
-                <i :class="['icon-star', { 'active': star <= Math.round(rating) }]"></i>
-            </li>
-        </ul>
-        <h3 class="product-info-name fw-normal">
+        <h3 class="product-info-name" style="font-size: 30px;">
             {{ product?.name }}
         </h3>
-        <div class="product-info-price" style="margin-top: 10px;">
+        <div class="product-info-price" style="">
             <div class="price-wrap">
                 <!-- Original Price with strikethrough -->
-                <span class="price-old compare-at-price fw-normal" style="text-decoration: line-through; color: #999; font-size: 16px;">
+                <!-- <span class="price-old compare-at-price fw-normal" style="text-decoration: line-through; color: #999; font-size: 16px;">
                     ₹{{ product?.price }} INR
-                </span>
+                </span> -->
                 
                 <!-- Discount Badge -->
-                <span v-if="product?.discount_perc" class="discount-badge" style="background: #ff4444; color: white; padding: 2px 8px; border-radius: 4px; margin: 0 8px; font-size: 14px;">
-                    {{ product?.discount_perc }}% OFF
-                </span>
+                <!-- <span v-if="product?.discount_perc" class="discount-badge" style="background: #ff4444; color: white; padding: 2px 8px; border-radius: 4px; margin: 0 8px; font-size: 14px;">
+                    {{ Math.round(product?.discount_perc) }}% OFF
+                </span> -->
                 
                 <!-- Final Sale Price -->
-                <span class="price-new price-on-sale" style="font-size: 20px; font-weight: bold; color: #333;">
-                    ₹{{ product?.sale_price }} INR
+                <span class="price-new price-on-sale" style="font-size: 18px; color: #333;">
+                    ₹{{ product?.price }} INR
                 </span>
 
                 <!-- Discount Amount -->
-                <span v-if="product?.discount_amt" class="discount-amount" style="color: #ff4444; font-size: 14px; margin-left: 8px;">
+                <!-- <span v-if="product?.discount_amt" class="discount-amount" style="color: #ff4444; font-size: 14px; margin-left: 8px;">
                     (Save ₹{{ product?.discount_amt }})
-                </span>
+                </span> -->
             </div>
         </div>
         <p class="product-infor-sub text-muted">

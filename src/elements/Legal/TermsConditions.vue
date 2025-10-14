@@ -19,139 +19,87 @@
   <section class="legal-section">
     <div class="container">
       <div class="policy-card">
-        <div class="policy-icon">
-          <svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#F5F5F5"/><path d="M13 27V15a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v12" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
+        
         <div class="policy-content">
-          <h2 class="policy-title">1. Acceptance of Terms</h2>
-          <p>By accessing and using The Modesse's website and services, you agree to be bound by these Terms & Conditions.</p>
-        </div>
-      </div>
-      <div class="policy-card">
-        <div class="policy-icon">
-          <svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#F5F5F5"/><path d="M20 13v14" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 20h14" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="policy-content">
-          <h2 class="policy-title">2. Account Registration</h2>
-          <p>To use certain features of our website, you must:</p>
+          <h2 class="policy-title">1. General</h2>
           <ul>
-            <li>Be at least 18 years old</li>
-            <li>Provide accurate and complete information</li>
-            <li>Maintain the security of your account</li>
-            <li>Notify us of any unauthorized access</li>
+            <li>The Modesse is a contemporary womenswear label committed to mindful production and sustainability</li>
+            <li>All garments are handcrafted after receiving an order using natural Indian fabrics</li>
+            <li>Slight variations in texture, color, or weave are part of the artisanal process</li>
           </ul>
         </div>
       </div>
+
       <div class="policy-card">
-        <div class="policy-icon">
-          <svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#F5F5F5"/><path d="M13 27V15a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v12" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
         <div class="policy-content">
-          <h2 class="policy-title">3. Product Information</h2>
-          <p>We strive to provide accurate product information, but:</p>
+          <h2 class="policy-title">2. Orders & Fulfilment</h2>
           <ul>
-            <li>Product images may vary from actual items</li>
-            <li>Prices are subject to change without notice</li>
-            <li>Product availability is not guaranteed</li>
-            <li>We reserve the right to modify product details</li>
+            <li>All products are made-to-order. Once an order is confirmed, it cannot be canceled</li>
+            <li>Dispatch typically takes 12–15 business days</li>
+            <li>Delivery timelines may vary depending on your location</li>
           </ul>
         </div>
       </div>
+
       <div class="policy-card">
-        <div class="policy-icon">
-          <svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#F5F5F5"/><path d="M20 13v14" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 20h14" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
         <div class="policy-content">
-          <h2 class="policy-title">4. Orders and Payment</h2>
-          <p>When placing an order:</p>
+          <h2 class="policy-title">3. Product Variation</h2>
           <ul>
-            <li>All prices are in Indian Rupees (INR)</li>
-            <li>Payment must be made in full before processing</li>
-            <li>We accept various payment methods</li>
-            <li>Orders are subject to acceptance and availability</li>
+            <li>Due to the nature of handwoven and hand-dyed fabrics, slight differences in color or finish may occur</li>
+            <li>These are not defects but characteristics of handcrafted garments</li>
           </ul>
         </div>
       </div>
+
       <div class="policy-card">
-        <div class="policy-icon">
-          <svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#F5F5F5"/><path d="M13 27V15a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v12" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
         <div class="policy-content">
-          <h2 class="policy-title">5. Shipping and Delivery</h2>
-          <p>Our shipping policies include:</p>
+          <h2 class="policy-title">4. Pricing & Payment</h2>
           <ul>
-            <li>Delivery times are estimates only</li>
-            <li>Shipping costs are calculated at checkout</li>
-            <li>Risk of loss transfers upon delivery</li>
-            <li>International shipping may have restrictions</li>
+            <li>Prices are in INR and inclusive of all applicable taxes unless specified otherwise</li>
+            <li>Payment must be made in full before order processing</li>
+            <li>We accept all major digital payment methods via secure gateways</li>
           </ul>
         </div>
       </div>
+
       <div class="policy-card">
-        <div class="policy-icon">
-          <svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#F5F5F5"/><path d="M20 13v14" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 20h14" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
         <div class="policy-content">
-          <h2 class="policy-title">6. Returns and Refunds</h2>
-          <p>Our return policy:</p>
+          <h2 class="policy-title">5. Exchange Policy</h2>
           <ul>
-            <li>Items must be returned within 30 days</li>
-            <li>Products must be unused and in original packaging</li>
-            <li>Refunds are processed within 7-14 business days</li>
-            <li>Shipping costs for returns are customer's responsibility</li>
+            <li>We do not offer returns or refunds under any circumstances</li>
+            <li>Exchanges may be accepted for size-related issues only, subject to the conditions listed in our Exchange Policy</li>
           </ul>
         </div>
       </div>
+
       <div class="policy-card">
-        <div class="policy-icon">
-          <svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#F5F5F5"/><path d="M13 27V15a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v12" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
         <div class="policy-content">
-          <h2 class="policy-title">7. Intellectual Property</h2>
-          <p>All content on our website is protected by:</p>
+          <h2 class="policy-title">6. Intellectual Property</h2>
           <ul>
-            <li>Copyright laws</li>
-            <li>Trademark rights</li>
-            <li>Other intellectual property rights</li>
-            <li>Unauthorized use is prohibited</li>
+            <li>All content on this website including text, images, logos, graphics, and product designs is the property of The Modesse</li>
+            <li>Content may not be reproduced without written consent</li>
           </ul>
         </div>
       </div>
+
       <div class="policy-card">
-        <div class="policy-icon">
-          <svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#F5F5F5"/><path d="M20 13v14" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 20h14" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
         <div class="policy-content">
-          <h2 class="policy-title">8. Limitation of Liability</h2>
-          <p>The Modesse is not liable for:</p>
+          <h2 class="policy-title">7. Limitation of Liability</h2>
           <ul>
-            <li>Indirect or consequential damages</li>
-            <li>Loss of profits or data</li>
-            <li>Service interruptions</li>
-            <li>Third-party actions</li>
+            <li>We are not liable for any indirect or consequential loss from the use of our website or products</li>
+            <li>This includes delays beyond our control</li>
           </ul>
         </div>
       </div>
+
       <div class="policy-card">
-        <div class="policy-icon">
-          <svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#F5F5F5"/><path d="M13 27V15a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v12" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
         <div class="policy-content">
-          <h2 class="policy-title">9. Governing Law</h2>
-          <p>These terms are governed by Indian law and any disputes shall be subject to the exclusive jurisdiction of the courts in Indore, Madhya Pradesh.</p>
+          <h2 class="policy-title">8. Governing Law</h2>
+          <ul>
+            <li>These terms are governed by Indian law</li>
+            <li>Any disputes will be handled exclusively in the courts of Indore, Madhya Pradesh</li>
+          </ul>
         </div>
-      </div>
-      <div class="policy-card">
-        <div class="policy-icon">
-          <svg width="40" height="40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="20" fill="#F5F5F5"/><path d="M20 13v14" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 20h14" stroke="#B88E2F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <div class="policy-content">
-          <h2 class="policy-title">10. Changes to Terms</h2>
-          <p>We reserve the right to modify these terms at any time. Continued use of our services constitutes acceptance of modified terms.</p>
-        </div>
-      </div>
-      <div class="policy-footer">
-        <p class="last-updated">Last Updated: {{ new Date().toLocaleDateString() }}</p>
       </div>
     </div>
   </section>
@@ -180,10 +128,43 @@ export default {
   background: #fff;
   padding: 40px 0 60px 0;
 }
+
+.policy-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 30px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 15px;
+  border: 1px solid #dee2e6;
+}
+
+.policy-main-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #B88E2F;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.policy-date {
+  font-size: 1.1rem;
+  color: #6c757d;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.policy-intro {
+  font-size: 1.2rem;
+  color: #495057;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
 .policy-card {
   display: flex;
   align-items: flex-start;
-  background: #faf7f2;
+  background: #f7f7f7;
   border-radius: 18px;
   box-shadow: 0 2px 16px rgba(184, 142, 47, 0.07);
   padding: 32px 28px;
@@ -229,6 +210,19 @@ export default {
   font-size: 0.98rem;
 }
 @media (max-width: 767px) {
+  .policy-header {
+    padding: 20px 15px;
+    margin-bottom: 30px;
+  }
+  
+  .policy-main-title {
+    font-size: 1.8rem;
+  }
+  
+  .policy-intro {
+    font-size: 1rem;
+  }
+  
   .policy-card {
     flex-direction: column;
     align-items: flex-start;

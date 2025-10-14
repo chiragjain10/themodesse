@@ -54,7 +54,7 @@
                             </div>
                         </div>
                     </td>
-                    <td class="order_price each-price">₹{{ parseFloat(item.product?.sale_price || 0).toFixed(2) }}</td>
+                    <td class="order_price each-price">₹{{ parseFloat(item.product?.price || 0).toFixed(2) }}</td>
                     <td>
                         <div class="order_quantity">
                             <div class="wg-quantity style-2">
@@ -98,7 +98,7 @@ const { updateQuantity } = useQuantityControls();
 
 // Computed property to calculate item subtotal
 const itemSubtotal = (item) => {
-    const price = parseFloat(item.product?.sale_price || 0);
+    const price = parseFloat(item.product?.price || 0);
     const quantity = item.qty || 0;
     return price * quantity;
 };

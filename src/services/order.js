@@ -1,9 +1,17 @@
-import axios from 'axios';
+import axios from '@/api/axios';
 
 export const orderService = {
     async createOrder(orderData) {
         try {
-            const response = await axios.post('/api/orders', orderData);
+            // Get user ID from auth store
+            const user = JSON.parse(localStorage.getItem('user'));
+            const userId = user?.id;
+            
+            if (!userId) {
+                throw new Error('User not authenticated');
+            }
+            
+            const response = await axios.post(`/api/users/checkout/${userId}`, orderData);
             return response.data;
         } catch (error) {
             console.error('[Order Service] Create order error:', error.response || error);

@@ -1,9 +1,9 @@
 <template>
     <!-- Page Title -->
-    <div class="flat-spacing-16 pb-0">
+    <div class="flat-spacing-8 pb-0">
         <div class="container">
             <div class="page-title border-0">
-                <div class="breadcrumbs">
+                <!-- <div class="breadcrumbs">
                     <ul class="bread-wrap mb-0">
                         <li><router-link to="/" class="text-main-4 link">Home</router-link></li>
                         <li class="br-line w-12 bg-main"></li>
@@ -23,7 +23,7 @@
                             <p>{{ product?.name }}</p>
                         </li>
                     </ul>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>

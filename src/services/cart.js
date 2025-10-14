@@ -88,16 +88,18 @@ export const cartService = {
     },
 
     async clearCart(cartToken) {
+        // There is no DELETE /api/cart/clear endpoint. You must remove items one by one.
         try {
-            const response = await axios.delete('/api/cart/clear', {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                data: {
-                    cart_token: cartToken
-                }
-            });
-            return response.data;
+            // Fetch the cart to get all item IDs
+            const cartData = await this.getCart(cartToken);
+            if (!cartData.carts || !Array.isArray(cartData.carts)) {
+                throw new Error('No cart items to clear.');
+            }
+            // Remove each item
+            for (const item of cartData.carts) {
+                await this.removeItem(item.item_id, cartToken);
+            }
+            return { status: 'success', message: 'Cart cleared.' };
         } catch (error) {
             console.error('[Cart Service] Clear cart error:', error.response || error);
             throw error;

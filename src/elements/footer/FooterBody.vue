@@ -6,26 +6,19 @@
                     <div class="footer-inner-wrap flex-lg-nowrap align-items-end">
                         <div class="box-title">
                             <h6>JOIN THE <span class="text-primary">#THEMODESSE</span> COMMUNITY</h6>
-                            <p class="notice font-2">
-                                <span class="fst-italic">Timeless Elegance</span>
-                                Awaits - 20% Off Your First Order!
-                            </p>
+                            
                         </div>
                         <div class="box-email">
-                            <p class="text-body text-main-3">Get exclusive access to new collections, styling tips, and special offers.</p>
+                            <p class="text-body text-main-3">Get exclusive access to new collections, styling tips, and
+                                special offers.</p>
                             <form class="form-email" @submit.prevent="handleNewsletterSubmit">
                                 <fieldset>
-                                    <input v-model="name" class="bg-transparent" type="text" placeholder="Your Name" required>
-                                </fieldset>
-                                <fieldset>
-                                    <input v-model="email" class="bg-transparent" type="email" placeholder="Your_email@example.com" required>
-                                </fieldset>
-                                <fieldset>
-                                    <input v-model="message" class="bg-transparent" type="text" placeholder="Why do you want to join? (Optional)" >
+                                    <input v-model="name" class="bg-transparent" type="text" placeholder="Your Name"
+                                        required>
                                 </fieldset>
                                 <div class="box-btn">
                                     <button type="submit" class="btn-submit link">
-                                        <i class="icon-arrow-right-2"></i>
+                                        <i class="icon-arrow-right-2 text-white"></i>
                                     </button>
                                 </div>
                             </form>
@@ -35,7 +28,7 @@
                 <div class="col-s2">
                     <div class="footer-inner-wrap flex-sm-nowrap s2">
                         <div class="footer-col-block">
-                            <p class="footer-heading footer-heading-mobile font-2">
+                            <p class="footer-heading footer-heading-mobile">
                                 CONTACT US
                             </p>
                             <div class="tf-collapse-content">
@@ -44,17 +37,12 @@
                                         <p class="text-main-4">Connect with us for personalized styling advice.</p>
                                     </li>
                                     <li>
-                                        <RouterLink to="/contact" class="text-main-4 link text-decoration-underline">
-                                            Visit Our Showroom
-                                        </RouterLink>
-                                    </li>
-                                    <li>
-                                        <a :href="`tel:${contactInfo.phone}`" class="text-main-4 link">
+                                        <a :href="`tel:${contactInfo.phone}`" class="text-main-4 link shine-effect">
                                             {{ contactInfo.phone }}
                                         </a>
                                     </li>
                                     <li>
-                                        <a :href="`mailto:${contactInfo.email}`" class="text-main-4 link">
+                                        <a :href="`mailto:${contactInfo.email}`" class="text-main-4 link shine-effect">
                                             {{ contactInfo.email }}
                                         </a>
                                     </li>
@@ -69,7 +57,7 @@
                             </div>
                         </div>
                         <div class="footer-col-block p-xl-0">
-                            <p class="footer-heading footer-heading-mobile font-2">
+                            <p class="footer-heading footer-heading-mobile">
                                 HELP
                             </p>
                             <div class="tf-collapse-content">
@@ -83,7 +71,7 @@
                             </div>
                         </div>
                         <div class="footer-col-block">
-                            <p class="footer-heading footer-heading-mobile font-2">
+                            <p class="footer-heading footer-heading-mobile">
                                 ABOUT US
                             </p>
                             <div class="tf-collapse-content">
@@ -105,6 +93,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import { RouterLink } from 'vue-router';
 import { useToast } from 'vue-toast-notification';
 import axiosInstance from '@/api/axios';
 
@@ -123,8 +112,7 @@ const contactInfo = {
 const socialLinks = [
     { name: 'facebook', url: 'https://facebook.com/themodesse' },
     { name: 'instagram', url: 'https://instagram.com/themodesse' },
-    { name: 'pinterest', url: 'https://pinterest.com/themodesse' },
-    { name: 'youtube', url: 'https://youtube.com/@themodesse' }
+    { name: 'linkin', url: 'https://linkedin.com/company/themodesse' },
 ];
 
 // Help Links
@@ -132,7 +120,6 @@ const helpLinks = [
     { name: 'Shipping & Returns', path: '/shipping-return' },
     { name: 'Track Order', path: '/track-order' },
     { name: 'Size Guide', path: '/size-guide' },
-    { name: 'Care Instructions', path: '/care-instructions' },
     { name: 'Privacy Policy', path: '/privacy-policy' },
     { name: 'Terms & Conditions', path: '/terms-conditions' }
 ];
@@ -141,7 +128,7 @@ const helpLinks = [
 const aboutLinks = [
     { name: 'Our Story', path: '/about' },
     { name: 'Shop', path: '/shop' },
-    { name: 'Blogs', path: '/blogs' },
+    { name: 'Blogs', path: '/journals' },
     { name: 'Contact Us', path: '/contact' }
 ];
 
@@ -167,13 +154,13 @@ const handleNewsletterSubmit = async () => {
 
 <style scoped>
 .footer-body {
-    padding: 60px 0;
-    background-color: #f8f8f8;
+    padding: 35px 0;
+    background-color: #fcf7f1;
 }
 
 .box-title h6 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+    font-size: 1rem;
+    /* margin-bottom: 0rem; */
 }
 
 .text-primary {
@@ -186,8 +173,7 @@ const handleNewsletterSubmit = async () => {
 }
 
 .form-email {
-    display: flex;
-    gap: 10px;
+    display: block;
     margin-top: 1rem;
 }
 
@@ -213,8 +199,8 @@ const handleNewsletterSubmit = async () => {
 }
 
 .footer-heading {
-    font-size: 1.2rem;
-    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    margin-bottom: 1rem;
     color: #333;
 }
 
@@ -253,21 +239,65 @@ const handleNewsletterSubmit = async () => {
 }
 
 .tf-social-icon a:hover {
-    color: #72381C;
+    color: #fff;
+}
+
+.footer-col-block {
+    width: 33.33% !important;
 }
 
 @media (max-width: 768px) {
     .footer-inner-wrap {
         flex-direction: column;
+        gap: 0;
     }
-    
+
     .box-title {
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: .5rem;
     }
-    
+    .text-body{
+        text-align: center;
+    }
+
     .footer-col-block {
         margin-bottom: 2rem;
+        width: initial !important;
     }
 }
-</style> 
+
+/* Shine Effect for Clickable Links */
+.shine-effect {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.shine-effect::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(184, 142, 47, 0.3),
+        transparent
+    );
+    transition: left 0.5s ease;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.shine-effect:hover::before {
+    left: 100%;
+}
+
+.shine-effect:hover {
+    color: #B88E2F !important;
+    transform: translateY(-1px);
+    text-shadow: 0 2px 4px rgba(184, 142, 47, 0.2);
+}
+</style>

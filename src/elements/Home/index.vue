@@ -1,78 +1,53 @@
 <template>
-    <Banner />
-    <Collection />
-    <BestSeller />
-    <BannerImageText />
-    <BannerFresh :newArrivals="newArrivals" />
-    <Collection2 :collections="collections" />
-    <Lookbook :lookbookProducts="topSales" />
-    <Testimonial :reviews="reviews" />
+    <div class="texture_background">
+        <Banner />
+        <About />
+        <NewArrivals />
+        <ShopByEditsHome />
+        <ShopByCategoriesHome />
+        <!-- <Workware /> -->
+        <!-- <BestSeller /> -->
+        <!-- <Swatches /> -->
+        <!-- <EveningWearBanner /> -->
+        <!-- <Vacation /> -->
+        <Bottom />
+        <!-- <Blogs /> -->
+    </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
 import Banner from './banner.vue';
-import BestSeller from './best-seller.vue';
-import Collection from './collection.vue';
-import BannerImageText from './banner-image-text.vue';
-import BannerFresh from './banner-fresh.vue';
-import Collection2 from './collection2.vue';
-import Lookbook from './lookbook.vue';
-import Testimonial from './testimonial.vue';
+import About from './about.vue';
+// import BestSeller from './best-seller.vue';
+import NewArrivals from './NewArrivals.vue';
+import ShopByEditsHome from './ShopByEditsHome.vue';
+import ShopByCategoriesHome from './ShopByCategoriesHome.vue';
+// import Workware from './workwear.vue';
+// import Vacation from './Vacation.vue';
+import Bottom from './contentbottom.vue';
+// import EveningWearBanner from './EveningWearBanner.vue';
 
-const newArrivals = ref([]);
-const collections = ref([]);
-const topSales = ref([]);
-const reviews = ref([]);
-const offers = ref([]);
-
-const fetchHomeData = async () => {
-    try {
-        const response = await axios.get('/api/home');
-        newArrivals.value = response.data.newArrivals;
-        collections.value = response.data.collections;
-        topSales.value = response.data.topSales;
-        reviews.value = response.data.topRatings
-            .flatMap(product =>
-                (product.reviews || [])
-                    .filter(review => review.user && review.user.name)
-                    .map(review => ({
-                        ...review,
-                        product: {
-                            id: product.id,
-                            name: product.name,
-                            slug: product.slug,
-                            image: product.image,
-                            sale_price: product.sale_price
-                        }
-                    }))
-            );
-    } catch (error) {
-        console.error('Error fetching home data:', error);
-    }
-};
-
-const fetchOffers = async () => {
-    try {
-        const response = await axios.get('/api/offers');
-        offers.value = response.data;
-    } catch (error) {
-        offers.value = [];
-    }
-};
-
-const formatDate = (date) => {
-    if (!date) return '';
-    return new Date(date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    });
-};
-
-onMounted(() => {
-    fetchHomeData();
-    fetchOffers();
-});
 </script>
+
+<style scoped>
+.texture_background {
+    background-image: url("https://www.transparenttextures.com/patterns/fabric-of-squares.png"), linear-gradient(120deg, #fdf6ee 0%, #f8fafc 100%);
+}
+
+/* iOS specific fixes */
+@supports (-webkit-touch-callout: none) {
+    .texture_background {
+        background-attachment: scroll;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+}
+
+/* Prevent iOS Safari from applying blur filters */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    .texture_background {
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+    }
+}
+</style>

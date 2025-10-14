@@ -14,8 +14,7 @@
                     </h1>
                 </div>
                 <div class="box-delivery">
-                    <h6 class="text fw-normal text-uppercase">Spend <span class="fw-medium">₹100</span> more to get
-                        <span class="fw-medium">Free
+                    <h6 class="text fw-normal text-uppercase"><span class="fw-medium">Free
                             Shipping</span>
                     </h6>
                     <div class="progress-cart tf-progress-ship">
@@ -47,4 +46,14 @@ const shippingProgress = computed(() => {
 </script>
 
 <style scoped>
+
+@media (max-width: 767px) {
+    .page-title{
+        display: initial;
+    }
+    .page-title>*{
+        margin-bottom: 20px;
+    }
+}
+
 </style> 

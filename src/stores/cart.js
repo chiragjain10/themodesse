@@ -97,7 +97,7 @@ export const useCartStore = defineStore('cart', () => {
                 this.items = response.carts;
                 this.count = this.items.reduce((total, item) => total + (parseInt(item.qty) || 0), 0);
                 this.total = this.items.reduce((sum, item) => {
-                    const price = parseFloat(item.product?.sale_price || 0);
+                    const price = parseFloat(item.product?.price || 0);
                     const qty = parseInt(item.qty) || 0;
                     return sum + (price * qty);
                 }, 0);

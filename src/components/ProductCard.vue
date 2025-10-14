@@ -45,7 +45,7 @@
                 <RouterLink :to="`/product/${product?.slug}`">{{ product?.name }}</RouterLink>
             </h3>
             <div class="product-price">
-                <span class="price">₹{{ product?.sale_price }}</span>
+                <span class="price">₹{{ product?.price }}</span>
             </div>
         </div>
     </div>

@@ -83,7 +83,7 @@
                     <button @click="clearAllFilters" class="tf-btn btn-reset">
                         <span class="fw-medium">CLEAR ALL</span>
                     </button>
-                    <button type="button" class="tf-btn btn-fill animate-btn" data-bs-dismiss="offcanvas">
+                    <button type="button" class="tf-btn btn-fill animate-btn" @click="handleApplyFilters">
                         <span class="fw-medium">APPLY [{{ selectedFiltersCount }}]</span>
                     </button>
                 </div>
@@ -118,7 +118,7 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'clear-all']);
 
 const selectedCategories = computed({
     get: () => props.modelValue || [],
@@ -225,6 +225,7 @@ const removeFilter = (filterKey) => {
 const clearAllFilters = () => {
     selectedCategories.value = [];
     priceRange.value = { ...priceLimits.value };
+    emit('clear-all');
     handleFilterChange();
 };
 
@@ -271,9 +272,8 @@ const handleClearAll = () => {
 
 const handleApplyFilters = () => {
     handleFilterChange();
-    if (window.innerWidth < 1200) {
-        closeMobileFilter();
-    }
+    isMobileFilterOpen.value = false;
+    document.body.style.overflow = 'visible';
 };
 
 // Lifecycle hooks
@@ -429,14 +429,14 @@ onUnmounted(() => {
 }
 
 .btn-primary {
-    background: #007bff;
-    border: 1px solid #007bff;
+    background: #72381C;
+    border: 1px solid #72381C;
     color: white;
 }
 
 .btn-primary:hover {
-    background: #0056b3;
-    border-color: #0056b3;
+    background: #72381C;
+    border-color: #72381C;
 }
 
 @media (max-width: 1199px) {

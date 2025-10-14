@@ -29,20 +29,15 @@
                                 <li v-for="product in searchResults" :key="product.p_id">
                                     <div class="tf-product-mini-view">
                                         <RouterLink :to="`/product/${product.slug}`" class="prd-image">
-                                            <img :src="product.image" :alt="product.name">
+                                            <img :src="'https://backend.themodesse.com/uploads/' + product.image"
+                                                :alt="product.name" />
                                         </RouterLink>
+
                                         <div class="prd-content">
                                             <RouterLink :to="`/product/${product.slug}`"
                                                 class="prd-name link text-uppercase">
                                                 {{ product.name }}
                                             </RouterLink>
-                                            <div class="price-wrap">
-                                                <span class="price-new price-on-sale">${{ product.sale_price }}</span>
-                                                <span v-if="product.discount > 0"
-                                                    class="price-old compare-at-price text-caption">${{
-                                                        calculateOriginalPrice(product.sale_price, product.discount,
-                                                    product.type) }}</span>
-                                            </div>
                                         </div>
                                     </div>
                                 </li>
@@ -52,7 +47,7 @@
                             No products found for "{{ searchKeyword }}".
                         </div>
                         <div v-else class="tf-grid-layout sm-col-2">
-                            <div class="feature-wrap">
+                            <!-- <div class="feature-wrap">
                                 <p class="title">QUICK LINK</p>
                                 <ul class="quick-link-list">
                                     <li>
@@ -69,7 +64,7 @@
                                         <RouterLink to="/shop" class="link-item text-main-4 link">Rings</RouterLink>
                                     </li>
                                 </ul>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
@@ -182,7 +177,7 @@ const calculateOriginalPrice = (salePrice, discount, type) => {
 .tf-product-mini-view .prd-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 4px;
 }
 

@@ -5,7 +5,7 @@
                 <!-- Left Column - Order Summary -->
                 <div class="col-lg-4">
                     <div class="order-summary">
-                        <h3>Order Summary</h3>
+                        <h3 class="mb-3">Order Summary</h3>
                         <div class="cart-items">
                             <div v-for="item in cartItems" :key="item.id" class="cart-item">
                                 <div class="item-image">
@@ -15,7 +15,7 @@
                                     <h4>{{ item.product?.name }}</h4>
                                     <p v-if="item.variants">Size: {{ item.variants?.size }}</p>
                                     <p>Quantity: {{ item.qty }}</p>
-                                    <p class="price">₹{{ (item.product?.sale_price || 0) * item.qty }}</p>
+                                    <p class="price">₹{{ (item.product?.price || 0) * item.qty }}</p>
                                 </div>
                             </div>
                         </div>
@@ -39,15 +39,9 @@
                 <!-- Right Column - Checkout Form -->
                 <div class="col-lg-8">
                     <div class="checkout-form">
-                        <h3>{{ auth.isAuthenticated ? 'Shipping Information' : 'Create Account & Continue' }}</h3>
+                        <h3>Shipping Information</h3>
                         
-                        <!-- Login Button for Guest Users -->
-                        <div v-if="!auth.isAuthenticated" class="mb-4">
-                            <p>Already have an account?</p>
-                            <button @click="handleLogin" class="btn btn-outline-primary">Login</button>
-                        </div>
-
-                        <form @submit.prevent="handleSubmit">
+                        <form @submit.prevent="handleDirectPayment">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -71,22 +65,6 @@
                             <div class="form-group">
                                 <label for="phone">Phone</label>
                                 <input type="tel" id="phone" v-model="form.phone" required>
-                            </div>
-
-                            <!-- Password fields for new users -->
-                            <div v-if="!auth.isAuthenticated" class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="password">Password</label>
-                                        <input type="password" id="password" v-model="form.password" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="confirmPassword">Confirm Password</label>
-                                        <input type="password" id="confirmPassword" v-model="form.confirmPassword" required>
-                                    </div>
-                                </div>
                             </div>
 
                             <div class="form-group">
@@ -114,36 +92,28 @@
                                 <input type="text" id="state" v-model="form.state" required>
                             </div>
 
-                            <div class="form-group">
-                                <label>Shipping Method</label>
-                                <div v-if="shippingMethods.length">
-                                    <div v-for="method in shippingMethods" :key="method.id" class="form-check">
-                                        <input class="form-check-input" type="radio" :id="'shipping-' + method.id" :value="method.id" v-model="selectedShippingMethod">
-                                        <label class="form-check-label" :for="'shipping-' + method.id">
-                                            {{ method.name }} - ₹{{ method.charge }} ({{ method.estimated_days }})
-                                        </label>
-                                    </div>
-                                </div>
-                                <div v-else>
-                                    <span class="text-muted">No shipping methods available.</span>
-                                </div>
-                            </div>
+                            <p class="text-caption text-center text-we-accept mb-2">We accept</p>
+                            <ul class="paymend-method-list justify-content-center">
+                                <li><a href="#"><img src="/src/assets/images/payment/visa-2.svg" alt=""></a></li>
+                                <li><a href="#"><img src="/src/assets/images/payment/dinner-2.svg" alt=""></a></li>
+                                <li><a href="#"><img src="/src/assets/images/payment/master-3.svg" alt=""></a></li>
+                                <li><a href="#"><img src="/src/assets/images/payment/stripe.svg" alt=""></a></li>
+                                <li><a href="#"><img src="/src/assets/images/payment/paypal.svg" alt=""></a></li>
+                                <li><a href="#"><img src="/src/assets/images/payment/gg-pay-2.svg" alt=""></a></li>
+                                <li><a href="#"><img src="/src/assets/images/payment/apple-pay-2.svg" alt=""></a></li>
+                            </ul>
 
-                            <h3 class="mt-4">Payment Method</h3>
-                            <div class="payment-methods">
-                                <div v-if="paymentMethods.length">
-                                    <div class="payment-method" v-for="method in paymentMethods" :key="method.type">
-                                        <input type="radio" :id="'payment-' + method.type" name="payment" :value="method.type" v-model="selectedPaymentMethod">
-                                        <label :for="'payment-' + method.type">{{ method.name }} - {{ method.description }}</label>
+                            <!-- Single Unified Button for Account Creation and Payment -->
+                            <button type="submit"
+                                class="tf-btn btn-fill-2 text-uppercase fw-medium animate-btn w-100 mt-4"
+                                :disabled="isSubmitting">
+                                <span v-if="isSubmitting" class="d-flex align-items-center justify-content-center">
+                                    <div class="spinner-border spinner-border-sm me-2" role="status">
+                                        <span class="visually-hidden">Loading...</span>
                                     </div>
-                                </div>
-                                <div v-else>
-                                    <span class="text-muted">No payment methods available.</span>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary mt-4" :disabled="isSubmitting">
-                                {{ isSubmitting ? 'Processing...' : (auth.isAuthenticated ? 'Place Order' : 'Create Account & Continue') }}
+                                    Processing Payment...
+                                </span>
+                                <span v-else>Pay ₹{{ total }}</span>
                             </button>
                         </form>
                     </div>
@@ -154,14 +124,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCartStore } from '@/stores/cart';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from '@/composables/useToast';
 import { orderService } from '@/services/order';
 import { authService } from '@/services/auth';
-import { checkoutService } from '@/services/checkout';
+import { razorpayService } from '@/services/razorpay';
 
 const router = useRouter();
 const cart = useCartStore();
@@ -170,33 +140,322 @@ const toast = useToast();
 
 const isSubmitting = ref(false);
 const shipping = ref(0);
-const shippingMethods = ref([]);
-const selectedShippingMethod = ref(null);
-const paymentMethods = ref([]);
-const selectedPaymentMethod = ref('');
+
 
 const form = ref({
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
-    password: '',
-    confirmPassword: '',
     address: '',
     city: '',
     pincode: '',
     state: '',
-    paymentMethod: 'cod'
+    country: 'India'
 });
 
 const cartItems = computed(() => cart.items);
 const subtotal = computed(() => {
     return cartItems.value.reduce((total, item) => {
-        return total + ((item.product?.sale_price || 0) * (item.qty || 0));
+        return total + ((item.product?.price || 0) * (item.qty || 0));
     }, 0);
 });
 
 const total = computed(() => subtotal.value + shipping.value);
+
+// Unified function to handle account creation and Razorpay payment
+const handleAccountCreationAndPayment = async () => {
+    try {
+        isSubmitting.value = true;
+        
+        // Step 1: Create account if user is not authenticated
+        if (!auth.isAuthenticated) {
+            console.log('Guest checkout - no account creation needed');
+        }
+
+        // Step 2: Create order in backend
+        console.log('Creating order...');
+        const orderData = {
+                firstName: form.value.firstName,
+                lastName: form.value.lastName,
+                email: form.value.email,
+                phone: form.value.phone,
+                address: form.value.address,
+                city: form.value.city,
+            state: form.value.state,
+            zip_code: form.value.pincode,
+            country: form.value.country,
+            subtotal: subtotal.value,
+            shipping: shipping.value,
+            total: total.value,
+            discount: 0,
+            coupon_id: null,
+            payment_method: 'razorpay',
+            items: cart.items.map(item => ({
+                product_id: item.id,
+                quantity: item.quantity,
+                price: item.price
+            }))
+        };
+
+        const orderResponse = await orderService.createOrder(orderData);
+        console.log('Order created:', orderResponse);
+
+        // Step 3: Initialize Razorpay with order details
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.async = true;
+
+        script.onload = () => {
+            if (window.Razorpay) {
+        const options = {
+                    key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_kpxRbZQeKReXjx',
+                    amount: total.value * 100, // Dynamic amount in paise
+                    currency: 'INR',
+                    name: 'The Modesse',
+                    description: `Order #${orderResponse.order_id || 'ORDER'}`,
+                    order_id: orderResponse.razorpay_order_id, // If backend creates Razorpay order
+                    handler: function (response) {
+                        // Handle successful payment
+                        console.log('Payment successful:', response);
+
+                        // Verify payment with backend
+                        verifyPaymentWithBackend(response, orderResponse.order_id);
+            },
+            prefill: {
+                name: `${form.value.firstName} ${form.value.lastName}`,
+                email: form.value.email,
+                contact: form.value.phone
+            },
+            theme: {
+                color: '#3399cc'
+            },
+            modal: {
+                ondismiss: function () {
+                    toast.info('Payment cancelled by user');
+                    isSubmitting.value = false;
+                    
+                    // Redirect to payment cancelled page
+                    router.push('/payment-cancelled');
+                }
+            }
+                };
+
+                const rzp = new window.Razorpay(options);
+                rzp.open();
+            }
+        };
+
+        document.head.appendChild(script);
+        
+    } catch (error) {
+        console.error('Error in account creation and payment:', error);
+        toast.error(error.response?.data?.message || 'Something went wrong');
+        isSubmitting.value = false;
+    }
+};
+
+// Simplified function to handle direct Razorpay payment
+const handleDirectPayment = async () => {
+    try {
+        isSubmitting.value = true;
+        
+        // Collect order data for tracking
+        const orderData = {
+            customer_name: `${form.value.firstName} ${form.value.lastName}`,
+            email: form.value.email,
+            phone: form.value.phone,
+            address: form.value.address,
+            city: form.value.city,
+            state: form.value.state,
+            zip_code: form.value.pincode,
+            country: form.value.country,
+            subtotal: subtotal.value,
+            shipping: shipping.value,
+            total: total.value,
+            items: cart.items.map(item => ({
+                product_id: item.id,
+                quantity: item.quantity,
+                price: item.price
+            }))
+        };
+
+        // Store order data in localStorage for later retrieval
+        localStorage.setItem('pendingOrder', JSON.stringify(orderData));
+        
+        // Generate a unique order ID
+        const orderId = 'ORDER_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('currentOrderId', orderId);
+
+        // Initialize Razorpay directly
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+        script.async = true;
+
+        script.onload = () => {
+            if (window.Razorpay) {
+                const options = {
+                    key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_kpxRbZQeKReXjx',
+                    amount: total.value * 100, // Amount in paise
+                    currency: 'INR',
+                    name: 'The Modesse',
+                    description: `Order #${orderId}`,
+                    order_id: null, // We'll let Razorpay generate this
+                    handler: function (response) {
+                        // Handle successful payment
+                        console.log('Payment successful:', response);
+                        
+                        // Store payment response
+                        localStorage.setItem('paymentResponse', JSON.stringify(response));
+                        
+                        // Send order notification email to admin
+                        sendOrderNotificationEmail(orderData, response, orderId);
+                        
+                        // Send order confirmation email to customer
+                        sendCustomerOrderEmail(orderData, response, orderId);
+                        
+                        // Redirect to success page
+                        router.push('/payment-success');
+                    },
+                    prefill: {
+                        name: `${form.value.firstName} ${form.value.lastName}`,
+                        email: form.value.email,
+                        contact: form.value.phone
+                    },
+                    theme: {
+                        color: '#3399cc'
+                    },
+                    modal: {
+                        ondismiss: function () {
+                            toast.info('Payment cancelled by user');
+                            isSubmitting.value = false;
+                            
+                            // Redirect to payment cancelled page
+                            router.push('/payment-cancelled');
+                        }
+                    }
+                };
+
+                const rzp = new window.Razorpay(options);
+                rzp.open();
+            }
+        };
+
+        document.head.appendChild(script);
+        
+    } catch (error) {
+        console.error('Error in direct payment:', error);
+        toast.error('Something went wrong. Please try again.');
+        isSubmitting.value = false;
+    }
+};
+
+// Function to send order notification email
+const sendOrderNotificationEmail = async (orderData, paymentResponse, orderId) => {
+    try {
+        const emailData = {
+            to: 'hello@themodesse.com',
+            subject: `New Order Received - ${orderId}`,
+            orderData: {
+                orderId: orderId,
+                customerName: orderData.customer_name,
+                email: orderData.email,
+                phone: orderData.phone,
+                address: orderData.address,
+                city: orderData.city,
+                state: orderData.state,
+                zipCode: orderData.zip_code,
+                country: orderData.country,
+                subtotal: orderData.subtotal,
+                shipping: orderData.shipping,
+                total: orderData.total,
+                items: orderData.items,
+                paymentId: paymentResponse.razorpay_payment_id,
+                paymentOrderId: paymentResponse.razorpay_order_id,
+                paymentSignature: paymentResponse.razorpay_signature,
+                paymentStatus: 'completed',
+                paymentMethod: 'razorpay',
+                orderDate: new Date().toISOString()
+            }
+        };
+
+        // Send email to backend
+        await axios.post('/api/orders/send-notification', emailData);
+        console.log('Order notification email sent successfully');
+        
+    } catch (error) {
+        console.error('Error sending order notification email:', error);
+        // Don't show error to user as this is background process
+    }
+};
+
+// Function to send customer order confirmation email
+const sendCustomerOrderEmail = async (orderData, paymentResponse, orderId) => {
+    try {
+        const emailData = {
+            to: orderData.email,
+            subject: `Order Confirmation - ${orderId}`,
+            orderData: {
+                orderId: orderId,
+                customerName: orderData.customer_name,
+                email: orderData.email,
+                phone: orderData.phone,
+                address: orderData.address,
+                city: orderData.city,
+                state: orderData.state,
+                zipCode: orderData.zip_code,
+                country: orderData.country,
+                subtotal: orderData.subtotal,
+                shipping: orderData.shipping,
+                total: orderData.total,
+                items: orderData.items,
+                paymentId: paymentResponse.razorpay_payment_id,
+                paymentOrderId: paymentResponse.razorpay_order_id,
+                paymentSignature: paymentResponse.razorpay_signature,
+                paymentStatus: 'completed',
+                paymentMethod: 'razorpay',
+                orderDate: new Date().toISOString(),
+                trackingUrl: `${window.location.origin}/track-order`
+            }
+        };
+
+        // Send email to customer
+        await axios.post('/api/orders/send-customer-email', emailData);
+        console.log('Customer order confirmation email sent successfully');
+        
+    } catch (error) {
+        console.error('Error sending customer order email:', error);
+        // Don't show error to user as this is background process
+    }
+};
+
+// Verify payment with backend
+const verifyPaymentWithBackend = async (paymentResponse, orderId) => {
+    try {
+        const verificationData = {
+            razorpay_payment_id: paymentResponse.razorpay_payment_id,
+            razorpay_order_id: paymentResponse.razorpay_order_id,
+            razorpay_signature: paymentResponse.razorpay_signature,
+            order_id: orderId
+        };
+
+        const verificationResponse = await razorpayService.verifyPayment(verificationData);
+        console.log('Payment verified:', verificationResponse);
+
+        if (verificationResponse.success) {
+            toast.success('Payment successful! Order placed successfully.');
+            cart.clearCart();
+            router.push('/order-confirmation');
+        } else {
+            toast.error('Payment verification failed');
+        }
+    } catch (error) {
+        console.error('Payment verification error:', error);
+        toast.error('Payment verification failed');
+    } finally {
+        isSubmitting.value = false;
+    }
+};
 
 onMounted(async () => {
     if (cartItems.value.length === 0) {
@@ -204,112 +463,74 @@ onMounted(async () => {
         router.push('/cart');
         return;
     }
+    // Set default shipping
+    shipping.value = 0;
     if (auth.user) {
         form.value.email = auth.user.email || '';
         form.value.firstName = auth.user.firstName || '';
         form.value.lastName = auth.user.lastName || '';
     }
-    if (auth.isAuthenticated && auth.user && auth.user.id) {
-        try {
-            const data = await checkoutService.getCheckoutData(auth.user.id);
-            shippingMethods.value = data.shippingMethods || [];
-            paymentMethods.value = data.paymentMethods || [];
-            if (shippingMethods.value.length > 0) {
-                selectedShippingMethod.value = shippingMethods.value[0].id;
-                shipping.value = shippingMethods.value[0].charge;
-            }
-            if (paymentMethods.value.length > 0) {
-                selectedPaymentMethod.value = paymentMethods.value[0].type;
-                form.value.paymentMethod = paymentMethods.value[0].type;
-            }
-        } catch (e) {
-            shippingMethods.value = [];
-            paymentMethods.value = [];
-        }
-    }
 });
-
-watch(selectedShippingMethod, (newId) => {
-    const method = shippingMethods.value.find(m => m.id === newId);
-    shipping.value = method ? method.charge : 0;
-});
-
-watch(selectedPaymentMethod, (newType) => {
-    form.value.paymentMethod = newType;
-});
-
-const handleLogin = () => {
-    localStorage.setItem('returnTo', router.currentRoute.value.fullPath);
-    router.push('/login');
-};
 
 const handleSubmit = async () => {
     try {
         isSubmitting.value = true;
 
-        if (!auth.isAuthenticated) {
-            if (form.value.password !== form.value.confirmPassword) {
-                toast.error('Passwords do not match');
-                return;
-            }
-
-            try {
-                const registerData = {
-                    firstName: form.value.firstName,
-                    lastName: form.value.lastName,
-                    email: form.value.email,
-                    phone: form.value.phone,
-                    password: form.value.password
-                };
-
-                const response = await authService.register(registerData);
-                
-                if (response.status === 'success') {
-                    await auth.login({
-                        email: form.value.email,
-                        password: form.value.password
-                    });
-                    toast.success('Account created successfully!');
-                }
-            } catch (error) {
-                if (error.response?.data?.message?.includes('already exists')) {
-                    toast.error('Email or phone already exists. Please login.');
-                    return;
-                }
-                throw error;
-            }
+        // Validate form data
+        if (!form.value.firstName || !form.value.lastName || !form.value.email ||
+            !form.value.phone || !form.value.address || !form.value.city ||
+            !form.value.pincode || !form.value.state) {
+            toast.error('Please fill in all required fields');
+            return;
         }
 
+        // Validate payment method
+        if (!selectedPaymentMethod.value) {
+            toast.error('Please select a payment method');
+            return;
+        }
+
+        // Handle user registration for guest users
+        if (!auth.isAuthenticated) {
+            // No password validation needed for guest checkout
+            console.log('Processing guest checkout');
+        }
+
+        // Prepare order data for database
         const orderData = {
-            items: cartItems.value,
-            shipping: {
-                firstName: form.value.firstName,
-                lastName: form.value.lastName,
-                email: form.value.email,
+            // User details
                 phone: form.value.phone,
+            city: form.value.city,
+            state: form.value.state,
+            zip_code: form.value.pincode,
                 address: form.value.address,
-                city: form.value.city,
-                pincode: form.value.pincode,
-                state: form.value.state
-            },
-            paymentMethod: form.value.paymentMethod,
+            address_2: '', // Optional field
+
+            // Order details
+            discount: 0, // No discount for now
             subtotal: subtotal.value,
-            shipping: shipping.value,
-            total: total.value
+            total: total.value,
+            shipping_method_id: selectedShippingMethod.value,
+            coupon_id: null, // No coupon for now
+            payment_method: selectedPaymentMethod.value
         };
 
+        // Create order in database
         const response = await orderService.createOrder(orderData);
 
-        if (response.status === 'success') {
+        if (response.success) {
+            // Clear cart after successful order
             await cart.clearCart();
 
             toast.success('Order placed successfully!');
-            router.push(`/order-confirmation/${response.orderId}`);
+
+            // Redirect to order confirmation page
+            router.push(`/order-confirmation/${response.order_id}`);
         } else {
             throw new Error(response.message || 'Failed to place order');
         }
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Order submission error:', error);
         toast.error(error.response?.data?.message || 'Failed to process your request. Please try again.');
     } finally {
         isSubmitting.value = false;
@@ -323,72 +544,99 @@ const handleSubmit = async () => {
 }
 
 .order-summary {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
+  background: #fafbfc;
+  border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  padding: 28px 24px 24px 24px;
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+.order-summary h3 {
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  letter-spacing: 0.5px;
+}
+
+.cart-items {
+  margin-bottom: 18px;
 }
 
 .cart-item {
-    display: flex;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #dee2e6;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eee;
 }
 
-.item-image {
-    width: 80px;
-    margin-right: 15px;
+.cart-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .item-image img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #eee;
 }
 
 .item-details {
-    flex: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .item-details h4 {
-    margin: 0 0 5px;
-    font-size: 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 2px 0;
 }
 
 .item-details p {
-    margin: 0;
-    font-size: 14px;
-    color: #6c757d;
+  margin: 0;
+  color: #888;
+  font-size: 0.97em;
 }
 
-.price {
-    font-weight: bold;
-    color: #000 !important;
+.item-details .price {
+  color: #222;
+  font-weight: 700;
+  margin-top: 2px;
 }
 
 .order-total {
-    margin-top: 20px;
+  margin-top: 18px;
+  border-top: 1px solid #e5e5e5;
+  padding-top: 16px;
 }
 
-.order-total > div {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
+.order-total>div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
 }
 
-.total {
-    font-weight: bold;
-    font-size: 18px;
-    border-top: 1px solid #dee2e6;
-    padding-top: 10px;
-    margin-top: 10px;
+.order-total .total {
+  font-weight: 700;
+  color: #222;
+  font-size: 1.08em;
+  margin-top: 8px;
 }
 
 .checkout-form {
     background: #fff;
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .form-group {
@@ -413,7 +661,39 @@ const handleSubmit = async () => {
 }
 
 .payment-method {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #fafafa;
+    transition: all 0.3s ease;
+}
+
+.payment-method:hover {
+    border-color: #007bff;
+    background: #f8f9ff;
+}
+
+.payment-method input[type="radio"] {
+    margin-right: 10px;
+}
+
+.payment-method label {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    margin: 0;
+}
+
+.method-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+.method-description {
+    font-size: 0.9rem;
+    color: #666;
 }
 
 .btn-primary {
@@ -427,5 +707,40 @@ const handleSubmit = async () => {
     .order-summary {
         margin-bottom: 30px;
     }
+}
+
+/* Loading spinner styles */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.125em;
+}
+
+.d-flex {
+    display: flex !important;
+}
+
+.align-items-center {
+    align-items: center !important;
+}
+
+.justify-content-center {
+    justify-content: center !important;
+}
+
+.me-2 {
+    margin-right: 0.5rem !important;
+}
+
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
 }
 </style>

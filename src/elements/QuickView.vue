@@ -42,8 +42,10 @@
                                 </RouterLink>
                                 <div class="product-info-price">
                                     <div class="price-wrap">
-                                        <span class="price-new price-on-sale h4">${{ parseFloat(product?.sale_price || 0).toFixed(2) }}</span>
-                                        <span v-if="product?.discount > 0" class="price-old compare-at-price fw-normal h6">${{ calculateOriginalPrice(product?.sale_price, product?.discount, product?.type) }}</span>
+                                        <span class="price-new price-on-sale h4">₹{{ calculateTotalPrice }}</span>
+                                        <span v-if="product?.discount > 0" class="price-old compare-at-price fw-normal h6">
+                                            ₹{{ calculateOriginalPrice(product?.price, product?.discount, product?.type) }}
+                                        </span>
                                         <p v-if="product?.discount > 0" class="badges-on-sale">
                                             <i class="icon-tag"></i>
                                             <span class="number-sale">
@@ -200,7 +202,7 @@ const product = computed(() => quickView.currentProduct);
 const calculateTotalPrice = computed(() => {
     if (!product.value) return 0;
     // Ensure sale_price is treated as a number
-    const price = parseFloat(product.value.sale_price || 0);
+    const price = parseFloat(product.value.price || 0);
     return (price * quantity.value).toFixed(2);
 });
 
@@ -228,6 +230,10 @@ watch(product, async (newProduct) => {
                     url: newProduct.gallery_images,
                     color: 'default'
                 });
+            }
+            // Fallback for images array (backend may send 'images')
+            if (Array.isArray(newProduct.images)) {
+                newProduct.images.forEach(img => images.push({ url: img.url || img, color: img.color || 'default' }));
             }
             if (newProduct.thumbnail_image) {
                 images.push({
@@ -303,10 +309,13 @@ const decreaseQuantity = () => {
 
 const handleAddToCartClick = async () => {
     if (!product.value) return;
-
+    // Quantity validation
+    if (quantity.value < 1) {
+        toast.error('Please select a valid quantity');
+        return;
+    }
     loading.value = true;
     success.value = false;
-
     try {
         const cartData = {
             product_id: product.value.id,
@@ -318,7 +327,9 @@ const handleAddToCartClick = async () => {
             cart_token: localStorage.getItem('cartToken') || generateCartToken()
         };
         await cart.addToCart(cartData);
-        // ... rest of your logic ...
+        success.value = true;
+        setTimeout(() => { success.value = false; }, 2000);
+        toast.success('Product added to cart!');
     } catch (error) {
         console.error('Error adding to cart from QuickView:', error);
         toast.error('Failed to add product to cart');
@@ -367,7 +378,23 @@ const initSwiper = () => {
                          prevEl: '.modal-quick-view .single-slide-prev',
                      },
                  });
-                  console.log('QuickView: Swiper initialized');
+                 console.log('QuickView: Swiper initialized');
+
+                 // Manual fallback for navigation buttons
+                 const nextBtn = document.querySelector('.modal-quick-view .single-slide-next');
+                 const prevBtn = document.querySelector('.modal-quick-view .single-slide-prev');
+                 if (nextBtn) {
+                     nextBtn.onclick = (e) => {
+                         e.preventDefault();
+                         if (quickViewSwiper) quickViewSwiper.slideNext();
+                     };
+                 }
+                 if (prevBtn) {
+                     prevBtn.onclick = (e) => {
+                         e.preventDefault();
+                         if (quickViewSwiper) quickViewSwiper.slidePrev();
+                     };
+                 }
              } else {
                  console.error('QuickView: Swiper element .modal-quick-view .tf-single-slide not found');
              }
