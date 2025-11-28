@@ -26,10 +26,6 @@
                 <a href="mailto:hello@themodesse.com" class="info-link">hello@themodesse.com</a>
               </li>
               <li>
-                <span class="info-label">Phone:</span>
-                <a href="tel:+919300125126" class="info-link">+91 93001 25126</a>
-              </li>
-              <li>
                 <span class="info-label">Opening Hours:</span>
                 <span class="info-value">24 Hours at your service</span>
               </li>
@@ -130,7 +126,6 @@ const contactSchema = {
     "name": "The Modesse",
     "contactPoint": {
       "@type": "ContactPoint",
-      "telephone": "+91-93001-25126",
       "contactType": "customer service",
       "email": "hello@themodesse.com",
       "availableLanguage": "English"

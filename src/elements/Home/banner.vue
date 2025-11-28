@@ -1,150 +1,232 @@
 <template>
-    <section class="premium-banner">
-        <video ref="bannerVideoRef" class="banner-video" loop muted playsinline preload="metadata"
-            @canplaythrough="handleVideoReady" @loadeddata="handleVideoLoaded" @error="handleVideoError">
-            <source :src="BannerVideoMP4" type="video/mp4" />
-            <source :src="BannerVideo" type="video/webm" />
-            Your browser does not support the video tag.
-        </video>
-        <div class="banner-overlay"></div>
-        <div class="banner-content d-none">
-            <h1 class="banner-title">Discover the New Collection</h1>
-            <p class="banner-subtitle">Timeless. Elegant. Uniquely You.</p>
-            <RouterLink to="/shop" class="banner-btn">Shop Now <span>&rarr;</span></RouterLink>
-        </div>
-    </section>
+  <section class="premium-banner">
+    <!-- Video element shown for all devices but we handle iOS autoplay failures with tap overlay -->
+    <video
+      ref="bannerVideoRef"
+      class="banner-video"
+      :poster="posterImage"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      @loadeddata="handleVideoLoaded"
+      @error="handleVideoError"
+      @playing="onPlaying"
+      @pause="onPause"
+    >
+      <!-- Use optimized Cloudinary URL parameters (f_auto & q_auto). Replace public IDs with yours -->
+      <source
+        :src="mp4Url"
+        type="video/mp4"
+      />
+      <source
+        :src="webmUrl"
+        type="video/webm"
+      />
+      <!-- Fallback text -->
+      Your browser does not support HTML5 video.
+    </video>
+
+    <!-- Poster fallback (shown when video couldn't autoplay / on error) -->
+    <div v-if="showPoster" class="banner-image" :style="{ backgroundImage: `url(${posterImage})` }"></div>
+
+    <!-- Tap-to-play overlay (visible when autoplay failed or on iOS) -->
+    <button
+      v-if="showPlayButton"
+      @click="userPlay"
+      class="play-overlay"
+      aria-label="Play banner video"
+    >
+      ▶
+    </button>
+
+    <div class="banner-overlay"></div>
+  </section>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import BannerVideo from '@/assets/Banner Video.webm';
-import BannerVideoMP4 from '@/assets/banner_video.mp4';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 const bannerVideoRef = ref(null);
-const isIOS = ref(false);
+const showPoster = ref(false);      
+const showPlayButton = ref(false);  
+const isPlaying = ref(false);
 
-// Detect iOS
-const detectIOS = () => {
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    return /iPad|iPhone|iPod/.test(userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-};
+const mp4Url = 'https://res.cloudinary.com/dzvwi8fzg/video/upload/f_auto,q_auto/v1764220208/Banner_Video_ols1du.mp4';
+const webmUrl = 'https://res.cloudinary.com/dzvwi8fzg/video/upload/f_auto,q_auto/v1764220208/Banner_Video_ols1du.webm';
+const posterImage = 'https://res.cloudinary.com/dzvwi8fzg/image/upload/f_auto,q_auto/v1764220208/Banner_Poster_xxxxx.jpg';
 
-function handleVideoReady() {
-    if (bannerVideoRef.value) {
-        bannerVideoRef.value.play().catch((error) => {
-            console.log('Video play failed:', error);
-        });
-    }
+function isIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+async function tryAutoPlay() {
+  const vid = bannerVideoRef.value;
+  if (!vid) return;
+
+  try {
+    await vid.play();
+    showPoster.value = false;
+    showPlayButton.value = false;
+    isPlaying.value = true;
+  } catch (err) {
+    showPoster.value = true;
+    showPlayButton.value = true;
+    isPlaying.value = false;
+  }
 }
 
 function handleVideoLoaded() {
-    console.log('Video loaded successfully');
+  tryAutoPlay();
 }
 
-function handleVideoError(error) {
-    console.error('Video error:', error);
+function handleVideoError(e) {
+  showPoster.value = true;
+  showPlayButton.value = false;
+  isPlaying.value = false;
+}
+
+function userPlay() {
+  const vid = bannerVideoRef.value;
+  if (!vid) return;
+  vid.play()
+    .then(() => {
+      showPlayButton.value = false;
+      showPoster.value = false;
+      isPlaying.value = true;
+    })
+    .catch((err) => {
+      console.error('Play after user gesture failed:', err);
+      // still show poster & play button
+      showPoster.value = true;
+      showPlayButton.value = true;
+    });
+}
+
+function onPlaying() {
+  isPlaying.value = true;
+  showPoster.value = false;
+  showPlayButton.value = false;
+}
+
+function onPause() {
+  isPlaying.value = false;
+}
+
+function visibilityHandler() {
+  const vid = bannerVideoRef.value;
+  if (!vid) return;
+  if (document.hidden) {
+    vid.pause();
+  } else if (!isPlaying.value) {
+    tryAutoPlay();
+  }
 }
 
 onMounted(() => {
-    isIOS.value = detectIOS();
-    
-    if (bannerVideoRef.value) {
-        // For iOS, we need to handle video differently
-        if (isIOS.value) {
-            bannerVideoRef.value.load();
-            bannerVideoRef.value.play().catch((error) => {
-                console.log('iOS video play failed:', error);
-            });
-        } else {
-            bannerVideoRef.value.play().catch((error) => {
-                console.log('Video play failed:', error);
-            });
-        }
+  const vid = bannerVideoRef.value;
+
+  if (vid) {
+    if (vid.readyState >= 3) {
+      tryAutoPlay();
     }
+  }
+
+  // visibility change listeners to pause/resume
+  document.addEventListener('visibilitychange', visibilityHandler);
+  window.addEventListener('pagehide', () => {
+    if (bannerVideoRef.value) bannerVideoRef.value.pause();
+  });
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('visibilitychange', visibilityHandler);
 });
 </script>
 
-
 <style scoped>
 .premium-banner {
-    position: relative;
-    width: 100vw;
-    height: 80vh;
-    min-height: 400px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  position: relative;
+  width: 100vw;
+  height: 80vh;
+  min-height: 400px;
+  overflow: hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: black;
 }
 
+/* Video */
 .banner-video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100%;
-    object-fit: cover;
-    z-index: 1;
-    filter: brightness(0.7) saturate(1.2);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  filter: brightness(0.7) saturate(1.2);
 }
 
+/* Poster fallback (div) */
+.banner-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+  filter: brightness(0.7) saturate(1.2);
+}
+
+/* play overlay button */
+.play-overlay {
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border: none;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  font-size: 36px;
+  line-height: 1;
+  padding: 18px 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* overlay gradient */
 .banner-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100%;
-    background: linear-gradient(90deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 50%);
-    z-index: 2;
-}
-
-.banner-content {
-    position: relative;
-    z-index: 3;
-    color: #fff;
-    text-align: center;
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
-.banner-title {
-    font-size: 3rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    margin-bottom: 1rem;
-    text-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-}
-
-.banner-subtitle {
-    font-size: 1.5rem;
-    font-weight: 400;
-    margin-bottom: 2rem;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
-}
-
-.banner-btn {
-    display: inline-block;
-    padding: 0.9rem 2.2rem;
-    background: #fff;
-    color: #222;
-    font-size: 1.1rem;
-    font-weight: 600;
-    border-radius: 32px;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
-    text-decoration: none;
-    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-}
-
-.banner-btn:hover {
-    background: #222;
-    color: #fff;
-    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.18);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.1) 50%);
+  z-index: 2;
 }
 
 @media (max-width: 768px) {
-    .premium-banner {
-        height: 45vh;
-    }
+  .premium-banner { height: 45vh; }
+  .play-overlay { font-size: 28px; padding: 14px 18px; }
+}
+
+/* iOS specific */
+@supports (-webkit-touch-callout: none) {
+  .premium-banner {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
 }
 </style>

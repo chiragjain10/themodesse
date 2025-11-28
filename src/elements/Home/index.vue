@@ -5,36 +5,28 @@
         <NewArrivals />
         <ShopByEditsHome />
         <ShopByCategoriesHome />
-        <!-- <Workware /> -->
-        <!-- <BestSeller /> -->
-        <!-- <Swatches /> -->
-        <!-- <EveningWearBanner /> -->
-        <!-- <Vacation /> -->
         <Bottom />
-        <!-- <Blogs /> -->
     </div>
 </template>
 
 <script setup>
 import Banner from './banner.vue';
 import About from './about.vue';
-// import BestSeller from './best-seller.vue';
 import NewArrivals from './NewArrivals.vue';
 import ShopByEditsHome from './ShopByEditsHome.vue';
 import ShopByCategoriesHome from './ShopByCategoriesHome.vue';
-// import Workware from './workwear.vue';
-// import Vacation from './Vacation.vue';
 import Bottom from './contentbottom.vue';
-// import EveningWearBanner from './EveningWearBanner.vue';
-
 </script>
 
 <style scoped>
 .texture_background {
-    background-image: url("https://www.transparenttextures.com/patterns/fabric-of-squares.png"), linear-gradient(120deg, #fdf6ee 0%, #f8fafc 100%);
+    background-image: url("https://www.transparenttextures.com/patterns/fabric-of-squares.png"),
+        linear-gradient(120deg, #fdf6ee 0%, #f8fafc 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
 }
 
-/* iOS specific fixes */
+/* iOS specific performance fixes */
 @supports (-webkit-touch-callout: none) {
     .texture_background {
         background-attachment: scroll;
@@ -43,11 +35,13 @@ import Bottom from './contentbottom.vue';
     }
 }
 
-/* Prevent iOS Safari from applying blur filters */
+/* Prevent rendering issues on iOS */
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
     .texture_background {
         -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
+        -webkit-perspective: 1000;
+        perspective: 1000;
     }
 }
 </style>

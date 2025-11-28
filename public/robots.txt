@@ -1,51 +1,21 @@
 User-agent: *
+
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /my-account/
+Disallow: /login/
+Disallow: /register/
+Disallow: /search
+Disallow: /search/
+Disallow: /account/
+Disallow: /admin/
+Disallow: /wp-admin/
+Disallow: /user-profile/
+
+
+Disallow: /order-confirmation/
+Disallow: /thank-you/
+
 Allow: /
 
-# Allow all important pages
-Allow: /shop
-Allow: /about
-Allow: /contact
-Allow: /product/
-Allow: /journals
-Allow: /workwear-collection
-Allow: /vacation-collection
-Allow: /evening-collection
-Allow: /size-guide
-Allow: /track-order
-Allow: /privacy-policy
-Allow: /terms-conditions
-Allow: /shipping-return
-
-# Disallow private/admin areas
-Disallow: /admin/
-Disallow: /backend/
-Disallow: /api/
-Disallow: /cart
-Disallow: /checkout
-Disallow: /account
-Disallow: /login
-Disallow: /register
-Disallow: /forgot-password
-Disallow: /reset-password
-Disallow: /order-confirmation
-Disallow: /payment-success
-Disallow: /payment-cancelled
-Disallow: /wishlist
-
-# Disallow search and filter pages
-Disallow: /shop?*
-Disallow: /search
-
-# Disallow temporary and cache files
-Disallow: /temp/
-Disallow: /cache/
-Disallow: /logs/
-Disallow: /.env
-Disallow: /composer.json
-Disallow: /package.json
-
-# Sitemap location
 Sitemap: https://themodesse.com/sitemap.xml
-
-# Crawl delay (optional - be respectful to server)
-Crawl-delay: 1 

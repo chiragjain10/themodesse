@@ -60,7 +60,6 @@ export const SEO_CONFIG = {
         },
         "contactPoint": {
           "@type": "ContactPoint",
-          "telephone": "+91-93001-25126",
           "contactType": "customer service",
           "email": "hello@themodesse.com"
         }
@@ -82,7 +81,6 @@ export const SEO_CONFIG = {
           "name": "The Modesse",
           "contactPoint": {
             "@type": "ContactPoint",
-            "telephone": "+91-93001-25126",
             "contactType": "customer service",
             "email": "hello@themodesse.com",
             "availableLanguage": "English"

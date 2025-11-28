@@ -37,11 +37,6 @@
                                         <p class="text-main-4">Connect with us for personalized styling advice.</p>
                                     </li>
                                     <li>
-                                        <a :href="`tel:${contactInfo.phone}`" class="text-main-4 link shine-effect">
-                                            {{ contactInfo.phone }}
-                                        </a>
-                                    </li>
-                                    <li>
                                         <a :href="`mailto:${contactInfo.email}`" class="text-main-4 link shine-effect">
                                             {{ contactInfo.email }}
                                         </a>
@@ -104,7 +99,6 @@ const message = ref('');
 
 // Contact Information
 const contactInfo = {
-    phone: '+91 93001 25126',
     email: 'hello@themodesse.com'
 };
 

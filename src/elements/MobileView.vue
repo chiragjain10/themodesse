@@ -67,12 +67,6 @@
                                 hello@themodesse.com
                             </a>
                         </li>
-                        <li>
-                            <span class="caption">Phone:</span>
-                            <a href="tel:+919300125126" class="link text-main-4">
-                                +91 93001 25126
-                            </a>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -210,6 +204,7 @@ onUnmounted(() => {
   padding: 24px 0 0 0;
   border-top: 1px solid #eee;
   margin-top: 24px;
+  font-size: 14px;
 }
 .mb-help-heading {
   font-weight: 700;
@@ -269,5 +264,9 @@ onUnmounted(() => {
 }
 .search-dropdown li:hover {
     background: #f8f8f8;
+}
+
+.nav-mb-item a{
+    font-size: 16px;
 }
 </style>

@@ -80,7 +80,6 @@ const aboutSchema = {
   },
   "contactPoint": {
     "@type": "ContactPoint",
-    "telephone": "+91-93001-25126",
     "contactType": "customer service",
     "email": "hello@themodesse.com"
   },

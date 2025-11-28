@@ -57,12 +57,6 @@
                                 hello@themodesse.com
                             </a>
                         </li>
-                        <li>
-                            <span class="caption">Phone:</span>
-                            <a href="tel:+919300125126" class="link text-main-4">
-                                +91 93001 25126
-                            </a>
-                        </li>
                     </ul>
                 </div>
             </div>
