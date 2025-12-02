@@ -12,8 +12,6 @@ import "./style.css"
 import router from './router/index.js'
 import App from './App.vue'
 import VueLazyload from 'vue-lazyload';
-// import loadingImg from '@/assets/images/loading.gif';
-// import errorImg from '@/assets/images/error.png';
 
 const app = createApp(App);
 const head = createHead();

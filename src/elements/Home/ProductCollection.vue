@@ -105,7 +105,7 @@ const keyToLabel = (key) => {
     vacationCollection: 'Vacation',
     collections: 'Collections',
     newArrivals: 'New In',
-    topSales: 'Top Sales',
+    topSales: 'Best Sellers',
     topRatings: 'Top Ratings',
   }
   return map[key] || key || 'Collection'

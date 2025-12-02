@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import { getData } from '@/stores/getApi'
 import { ref } from 'vue'
 import { useCartStore } from './cart'
 import { useWishlistStore } from './wishlist'
@@ -21,8 +21,8 @@ export const useProductStore = defineStore('product', () => {
     loading.value = true
     error.value = null
     try {
-      const response = await axios.get(`/api/products/${slug}`)
-      product.value = response.data.product
+      const response = await getData(`/api/products/${slug}`)
+      product.value = response.product
     } catch (err) {
       error.value = err?.response?.data?.message || 'Failed to load product.'
       product.value = null

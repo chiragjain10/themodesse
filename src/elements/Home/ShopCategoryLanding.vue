@@ -42,7 +42,7 @@ const loading = ref(true)
 const tiles = ref([])
 
 const cards = ref([
-  { key: 'best', label: 'Best Seller', image: './images/categories/bestseller.jpg', to: { path: '/product-collection', query: { key: 'topSales', label: 'Top Sales' } } },
+  { key: 'best', label: 'Best Seller', image: './images/categories/bestseller.jpg', to: { path: '/product-collection', query: { key: 'topSales', label: 'Best Sellers' } } },
   { key: 'dresses', label: 'Dresses', image: './images/categories/dresses.jpg', to: { path: '/shop', query: { category_id: 2 } } },
   { key: 'sets', label: 'Sets', image: './images/categories/sets.jpg', to: { path: '/shop', query: { category_id: 3 } } },
   { key: 'skirts', label: 'Skirts', image: './images/categories/skirts.jpg', to: { path: '/shop', query: { category_id: 1 } } },

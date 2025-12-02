@@ -2,13 +2,12 @@ import axios from 'axios';
 
 const isDev = import.meta.env.DEV;
 
+const baseURL = isDev
+  ? '/api'
+  : (import.meta.env.VITE_API_BASE_URL || 'https://backend.themodesse.com/');
+
 const axiosInstance = axios.create({
-  // Use relative baseURL in dev so Vite proxy handles requests
-  // In prod, prefer relative as well so Vercel rewrites handle '/api/*'.
-  // If VITE_API_BASE_URL is explicitly set, we will use it.
-  baseURL: isDev
-    ? '/api'
-    : (import.meta.env.VITE_API_BASE_URL || ''),
+  baseURL: baseURL,
 
   headers: {
     'Accept': 'application/json',
@@ -16,23 +15,15 @@ const axiosInstance = axios.create({
     'X-Requested-With': 'XMLHttpRequest',
   },
 
-  // Only enable credentials if backend needs cookies (like Sanctum)
   withCredentials: false,
   timeout: 10000,
 });
 
-// 🟢 REQUEST INTERCEPTOR
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Avoid baseURL + '/api' + '/api/...'
-    const base = config.baseURL || '';
-    if (/\/api\/?$/.test(base) && typeof config.url === 'string' && config.url.startsWith('/api')) {
-      config.url = config.url.replace(/^\/api/, ''); // drop leading /api
-    }
+    const fullUrl = (config.baseURL || '') + (config.url || '');
+    console.log('Requesting:', fullUrl);
 
-    console.log('➡️ Requesting:', (config.baseURL || '') + config.url);
-
-    // Add token only if exists
     const token = localStorage.getItem('token');
     if (token && !config.url.includes('/cart/')) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -41,27 +32,29 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => {
-    console.error('❌ Request error:', error);
+    console.error('Request error:', error);
     return Promise.reject(error);
   }
 );
 
-// 🟢 RESPONSE INTERCEPTOR
 axiosInstance.interceptors.response.use(
   (response) => {
-    console.log('✅ Response received from:', response.config.url);
+    console.log('Response received from:', response.config.url);
     return response;
   },
   (error) => {
     if (error.response) {
-      console.error(`❌ Response error [${error.response.status}]:`, error.response.data);
+      console.error(`Response error [${error.response.status}]:`, error.response.data);
+      
+      if (error.response.status === 503) {
+        console.error('Service Unavailable - Backend server is down or unreachable');
+      }
     } else if (error.request) {
-      console.error('🚫 No response received from server:', error.request);
+      console.error('No response received from server:', error.request);
     } else {
-      console.error('⚠️ Request setup error:', error.message);
+      console.error('Request setup error:', error.message);
     }
 
-    // Auto logout on 401 (except cart)
     if (error.response?.status === 401 && !error.config.url.includes('/cart/')) {
       localStorage.removeItem('token');
     }
